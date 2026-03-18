@@ -183,6 +183,67 @@ function updateWeaponOptions() {
         weaponSelect.appendChild(option);
     });
 }
+function updateSkillTree() {
+    const job = document.getElementById("job").value;
+    const data = skillTrees[job] || skillTrees["Novice"];
+
+    const container = document.getElementById("skillContainer");
+    const questList = document.getElementById("questSkills");
+    const title = document.getElementById("skillTitle");
+
+    container.innerHTML = "";
+    questList.innerHTML = "";
+
+    title.innerText = job + " Skill Tree";
+
+    data.skills.forEach(skill => {
+        const div = document.createElement("div");
+        div.className = "skill-node";
+
+        if (skill.right) div.classList.add("right");
+
+        div.style.gridRow = skill.row;
+
+        div.innerHTML = `
+            <div class="skill-box">
+                ${skill.name} (${skill.level})
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+
+    data.quest.forEach(q => {
+        const li = document.createElement("li");
+        li.innerText = q;
+        questList.appendChild(li);
+    });
+}
+// ===============================
+// SKILL TREE DATA
+// ===============================
+const skillTrees = {
+    "Novice": {
+        skills: [
+            { name: "Basic Skill", level: 9, row: 1 }
+        ],
+        quest: ["First Aid", "Play Dead"]
+    },
+
+    "Swordsman": {
+        skills: [
+            { name: "Sword Mastery", level: 10, row: 1 },
+            { name: "Increase HP Recovery", level: 10, row: 2 },
+            { name: "Bash", level: 10, row: 3 },
+            { name: "Provoke", level: 10, row: 4 },
+
+            { name: "Two-Handed Sword Mastery", level: 10, row: 1, right: true },
+            { name: "Magnum Break", level: 10, row: 3, right: true },
+            { name: "Endure", level: 10, row: 4, right: true }
+        ],
+        quest: ["Berserk", "Fatal Blow", "HP Recovery While Moving"]
+    }
+};
 
 // ===============================
 // MAIN UPDATE FUNCTION
@@ -309,3 +370,4 @@ function resetCharacter() {
     updateCharacterImage();
     updateStats();
 }
+updateSkillTree();

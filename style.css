@@ -415,28 +415,60 @@ input:checked + .slider:before {
 /* ===============================
    TABS SYSTEM
 =============================== */
+/* --- Updated Layout for Tabs --- */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Keeps the whole app centered in screen */
+    width: 1000px;       /* Match your panel width */
+}
+
 .tabs {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    justify-content: flex-start; /* Aligns tabs to the left side */
+    align-self: flex-start;      /* Sticks the tab group to the left of the container */
+    gap: 4px;
+    margin-left: 10px;           /* Slight offset from the very edge if desired */
+    z-index: 2;                  /* Ensures tabs stay above the panel border shadow */
 }
 
 .tab-btn {
-    padding: 8px 16px;
-    border: 1px solid #c8a94c;
+    padding: 8px 20px;
+    border: 2px solid #c8a94c;
+    border-bottom: none;         /* Remove bottom border so it merges with panel */
     background: #0a1430;
     color: #ffd96a;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px 8px 0 0;  /* Rounded top corners only */
+    font-weight: bold;
     transition: 0.2s;
+    position: relative;
+    top: 2px;                    /* Pulls tabs down slightly to "sit" on the panel border */
+}
+
+.tab-btn:hover {
+    background: #16254a;
 }
 
 .tab-btn.active {
     background: linear-gradient(180deg, #ffd96a, #c8a94c);
     color: #000;
+    height: 35px;                /* Slightly taller to emphasize it's the active tab */
+    top: 2px;                    /* Overlaps the panel border perfectly */
 }
 
+/* Ensure the panel doesn't have extra top margin now */
+.status-panel {
+    width: 100%;                 /* Takes full width of app-container */
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(8, 18, 40, 0.85), rgba(4, 10, 25, 0.95));
+    backdrop-filter: blur(10px);
+    border-radius: 0 14px 14px 14px; /* Squared top-left corner to match tab */
+    border: 2px solid #c8a94c;
+    animation: panelGlow 4s infinite ease-in-out;
+    position: relative;
+    z-index: 1;
+}
 .tab-content {
     display: none;
 }
@@ -444,34 +476,55 @@ input:checked + .slider:before {
 .tab-content.active {
     display: block;
 }
+/* ===============================
+   SKILL TREE UI
+=============================== */
 
-/* Skill Tree Panel */
-.skill-tree {
-    height: 500px;
-    background: #0c1635;
-    border: 1px solid #c8a94c;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-}
-.tabs {
-    width: 1000px;
-    display: flex;
-    gap: 5px;
-}
-
-.tab-btn {
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-}
-
-.tab-btn.active {
+#skillContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 30px;
+    column-gap: 120px;
     position: relative;
-    top: 2px;
+    margin-top: 20px;
 }
-/* Fix alignment of tabs + panel */
-.app-container {
+
+.skill-node {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    position: relative;
+}
+
+.skill-node.right {
+    justify-content: flex-end;
+}
+
+/* Skill box */
+.skill-box {
+    background: linear-gradient(180deg, #4facfe, #1c3faa);
+    border: 2px solid #c8a94c;
+    border-radius: 6px;
+    padding: 8px 12px;
+    min-width: 170px;
+    text-align: center;
+    font-size: 13px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
+/* Connector lines */
+.skill-node::after {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 2px;
+    background: #c8a94c;
+    top: 50%;
+}
+
+.skill-node:not(.right)::after {
+    right: -80px;
+}
+
+.skill-node.right::after {
+    left: -80px;
 }
