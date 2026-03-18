@@ -39,6 +39,144 @@ body::after {
     z-index: -1;
 }
 
+/*Tab bar */
+/* Tab Navigation Container */
+.panel-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: -1px; /* Overlap border for a seamless look */
+    padding-left: 10px;
+}
+
+/* Individual Tab Buttons */
+.tab-btn {
+    padding: 8px 25px;
+    background: #1a2a4a; /* Dark blue to match your theme */
+    border: 1px solid #c8a94c; /* Gold border */
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    color: #ffd96a;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.tab-btn:hover {
+    opacity: 1;
+    background: #253b66;
+}
+
+.tab-btn.active {
+    opacity: 1;
+    background: #2b3d5f; /* Slightly lighter when active */
+    border-bottom: 2px solid #2b3d5f; /* Hides the top border of the panel below */
+    z-index: 2;
+    box-shadow: 0 -2px 10px rgba(200, 169, 76, 0.2);
+}
+
+/* Content Area Wrapper */
+.panel-content-wrapper {
+    border: 1px solid #c8a94c;
+    background: rgba(5, 11, 28, 0.95);
+    border-radius: 0 5px 5px 5px;
+    padding: 15px;
+    min-height: 500px;
+}
+
+/* Hiding/Showing Logic */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/*skill Tree Css*/
+.skill-tree-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 70px);
+    gap: 15px;
+    padding: 10px;
+    justify-content: start;
+}
+#skillConnections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.arrow-line {
+    position: absolute;
+    height: 2px;
+    background: #ffd96a;
+    transform-origin: left center;
+    z-index: 0;
+}
+
+.arrow-line::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -4px;
+    border-left: 8px solid #ffd96a;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+.skill {
+    width: 64px;
+    height: 64px;
+    border: 2px solid #444;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.skill img {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+}
+
+/* LEVEL TEXT */
+.skill-level {
+    position: absolute;
+    bottom: 0;
+    right: 3px;
+    font-size: 12px;
+    color: white;
+}
+
+/* STATES */
+.skill.locked {
+    filter: grayscale(100%);
+    opacity: 0.3;
+}
+
+.skill.available {
+    filter: grayscale(0%);
+    border-color: yellow;
+    box-shadow: 0 0 10px yellow;
+}
+
+.skill.learned {
+    filter: grayscale(0%);
+    border-color: cyan;
+}
+
 /* ---Main Panel & Glass-morphism --- */
 .status-panel {
     width: 1000px;
@@ -85,10 +223,11 @@ body::after {
 }
 
 .character-box img.character-gif {
-    height: 80%;
-    width: auto;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    transform: scale(1);
+    border-radius: 12px;
+    transform: scale(0.75); /* zoomed out more */
 }
 
 /* ---  HP/SP Box & Bars --- */
@@ -170,11 +309,11 @@ body::after {
 
 /* --- 5. Interactive Elements & Inputs --- */
 .reset-button {
-    width: 300px;
+    width: 250px;
     padding: 10px;
     position: absolute;
-    bottom: 30px;
-    left: 25px;
+    bottom: 30px;   
+    left: 28px;
     border: none;
     border-radius: 6px;
     font-weight: bold;
@@ -411,120 +550,4 @@ input:checked + .slider:before {
     .tables-container {
         flex-direction: column;
     }
-}
-/* ===============================
-   TABS SYSTEM
-=============================== */
-/* --- Updated Layout for Tabs --- */
-.app-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Keeps the whole app centered in screen */
-    width: 1000px;       /* Match your panel width */
-}
-
-.tabs {
-    display: flex;
-    justify-content: flex-start; /* Aligns tabs to the left side */
-    align-self: flex-start;      /* Sticks the tab group to the left of the container */
-    gap: 4px;
-    margin-left: 10px;           /* Slight offset from the very edge if desired */
-    z-index: 2;                  /* Ensures tabs stay above the panel border shadow */
-}
-
-.tab-btn {
-    padding: 8px 20px;
-    border: 2px solid #c8a94c;
-    border-bottom: none;         /* Remove bottom border so it merges with panel */
-    background: #0a1430;
-    color: #ffd96a;
-    cursor: pointer;
-    border-radius: 8px 8px 0 0;  /* Rounded top corners only */
-    font-weight: bold;
-    transition: 0.2s;
-    position: relative;
-    top: 2px;                    /* Pulls tabs down slightly to "sit" on the panel border */
-}
-
-.tab-btn:hover {
-    background: #16254a;
-}
-
-.tab-btn.active {
-    background: linear-gradient(180deg, #ffd96a, #c8a94c);
-    color: #000;
-    height: 35px;                /* Slightly taller to emphasize it's the active tab */
-    top: 2px;                    /* Overlaps the panel border perfectly */
-}
-
-/* Ensure the panel doesn't have extra top margin now */
-.status-panel {
-    width: 100%;                 /* Takes full width of app-container */
-    padding: 20px;
-    background: linear-gradient(180deg, rgba(8, 18, 40, 0.85), rgba(4, 10, 25, 0.95));
-    backdrop-filter: blur(10px);
-    border-radius: 0 14px 14px 14px; /* Squared top-left corner to match tab */
-    border: 2px solid #c8a94c;
-    animation: panelGlow 4s infinite ease-in-out;
-    position: relative;
-    z-index: 1;
-}
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-/* ===============================
-   SKILL TREE UI
-=============================== */
-
-#skillContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 30px;
-    column-gap: 120px;
-    position: relative;
-    margin-top: 20px;
-}
-
-.skill-node {
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.skill-node.right {
-    justify-content: flex-end;
-}
-
-/* Skill box */
-.skill-box {
-    background: linear-gradient(180deg, #4facfe, #1c3faa);
-    border: 2px solid #c8a94c;
-    border-radius: 6px;
-    padding: 8px 12px;
-    min-width: 170px;
-    text-align: center;
-    font-size: 13px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.6);
-}
-
-/* Connector lines */
-.skill-node::after {
-    content: "";
-    position: absolute;
-    width: 80px;
-    height: 2px;
-    background: #c8a94c;
-    top: 50%;
-}
-
-.skill-node:not(.right)::after {
-    right: -80px;
-}
-
-.skill-node.right::after {
-    left: -80px;
 }

@@ -29,6 +29,29 @@ function updateCharacterImage() {
 }
 
 // ===============================
+// TAB SYSTEM (BRING TO FRONT)
+// ===============================
+function switchPanel(panelName) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => tab.classList.remove('active'));
+    contents.forEach(content => content.classList.remove('active'));
+
+    if (panelName === 'stats') {
+        document.getElementById('tab-stats').classList.add('active');
+        document.getElementById('statsPanel').classList.add('active');
+    } else if (panelName === 'skills') {
+        document.getElementById('tab-skills').classList.add('active');
+        document.getElementById('skillsPanel').classList.add('active');
+        
+        // Refresh skills whenever the skill tab is brought to front
+        if (typeof updateSkillUI === 'function') {
+            updateSkillUI();
+        }
+    }
+}
+// ===============================
 // STAT POINT SYSTEM
 // ===============================
 function getPointsForLevel(level) {
@@ -183,73 +206,34 @@ function updateWeaponOptions() {
         weaponSelect.appendChild(option);
     });
 }
-function updateSkillTree() {
-    const job = document.getElementById("job").value;
-    const data = skillTrees[job] || skillTrees["Novice"];
-
-    const container = document.getElementById("skillContainer");
-    const questList = document.getElementById("questSkills");
-    const title = document.getElementById("skillTitle");
-
-    container.innerHTML = "";
-    questList.innerHTML = "";
-
-    title.innerText = job + " Skill Tree";
-
-    data.skills.forEach(skill => {
-        const div = document.createElement("div");
-        div.className = "skill-node";
-
-        if (skill.right) div.classList.add("right");
-
-        div.style.gridRow = skill.row;
-
-        div.innerHTML = `
-            <div class="skill-box">
-                ${skill.name} (${skill.level})
-            </div>
-        `;
-
-        container.appendChild(div);
-    });
-
-    data.quest.forEach(q => {
-        const li = document.createElement("li");
-        li.innerText = q;
-        questList.appendChild(li);
-    });
-}
-// ===============================
-// SKILL TREE DATA
-// ===============================
-const skillTrees = {
-    "Novice": {
-        skills: [
-            { name: "Basic Skill", level: 9, row: 1 }
-        ],
-        quest: ["First Aid", "Play Dead"]
-    },
-
-    "Swordsman": {
-        skills: [
-            { name: "Sword Mastery", level: 10, row: 1 },
-            { name: "Increase HP Recovery", level: 10, row: 2 },
-            { name: "Bash", level: 10, row: 3 },
-            { name: "Provoke", level: 10, row: 4 },
-
-            { name: "Two-Handed Sword Mastery", level: 10, row: 1, right: true },
-            { name: "Magnum Break", level: 10, row: 3, right: true },
-            { name: "Endure", level: 10, row: 4, right: true }
-        ],
-        quest: ["Berserk", "Fatal Blow", "HP Recovery While Moving"]
-    }
-};
 
 // ===============================
 // MAIN UPDATE FUNCTION
 // ===============================
 
 function updateStats(changedStatId) {
+    // ===============================
+    // HANDLE JOB CHANGE (RESET SKILLS)
+    // ===============================
+    if (job !== currentJobTracked) {
+        playerSkills = {};
+        skillPoints = 0;
+        lastJobLevel = jobLevel;
+        currentJobTracked = job;
+    }
+
+    // ===============================
+    // SKILL POINT GAIN
+    // ===============================
+    if (jobLevel > lastJobLevel) {
+        skillPoints += (jobLevel - lastJobLevel);
+    } 
+    else if (jobLevel < lastJobLevel) {
+        // optional: reset if level goes down
+        skillPoints = 0;
+    }
+
+    lastJobLevel = jobLevel;
 
     //Validation for Base Level
     const baseLevelInput = document.getElementById("baseLevel");
@@ -357,6 +341,10 @@ function updateStats(changedStatId) {
     document.getElementById("flee").innerText = (level + stats.agi) + " + " + (Math.floor(stats.luk / 10) + 1);
     document.getElementById("critical").innerText = Math.floor(stats.luk * 0.3) + 1;
     document.getElementById("aspd").innerText = calculateASPD(job, weapon, stats.agi, stats.dex);
+
+    if (document.getElementById('skillsPanel').classList.contains('active')) {
+    updateSkillUI();
+}
 }
 
 //reset button function
@@ -369,5 +357,273 @@ function resetCharacter() {
     updateWeaponOptions();
     updateCharacterImage();
     updateStats();
+    switchPanel('stats');
 }
-updateSkillTree();
+
+// ===============================
+// SKILL TREE DATA and code
+// ===============================
+
+let playerSkills = {};
+let skillPoints = 0;
+let lastJobLevel = 1;
+let currentJobTracked = "Novice";
+// skills each job
+const jobSkills = {
+    "Novice": {
+        basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal" },
+        firstAid: { name: "First Aid", maxLevel: 1, type: "quest" },
+        playDead: { name: "Play Dead", maxLevel: 1, type: "quest" }
+    },
+
+    "Swordsman": {
+        bash: { name: "Bash", maxLevel: 10, type: "normal" },
+        endure: { name: "Endure", maxLevel: 10, type: "normal" },
+        increaseHP: { name: "Increase HP Recovery", maxLevel: 10, type: "normal" },
+        magnumBreak: { name: "Magnum Break", maxLevel: 10, type: "normal" },
+        provoke: { name: "Provoke", maxLevel: 10, type: "normal" },
+        swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal" },
+        twoHandedMastery: { name: "Two-Handed Sword Mastery", maxLevel: 10, type: "normal" },
+
+        berserk: { name: "Berserk", maxLevel: 1, type: "quest" },
+        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest" },
+        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest" }
+    },
+
+    "Mage": {
+        coldBolt: { name: "Cold Bolt", maxLevel: 10, type: "normal" },
+        fireBall: { name: "Fire Ball", maxLevel: 10, type: "normal" },
+        fireBolt: { name: "Fire Bolt", maxLevel: 10, type: "normal" },
+        fireWall: { name: "Fire Wall", maxLevel: 10, type: "normal" },
+        frostDiver: { name: "Frost Diver", maxLevel: 10, type: "normal" },
+        spRecovery: { name: "Increase SP Recovery", maxLevel: 10, type: "normal" },
+        lightningBolt: { name: "Lightning Bolt", maxLevel: 10, type: "normal" },
+        napalmBeat: { name: "Napalm Beat", maxLevel: 10, type: "normal" },
+        safetyWall: { name: "Safety Wall", maxLevel: 10, type: "normal" },
+        sight: { name: "Sight", maxLevel: 1, type: "normal" },
+        soulStrike: { name: "Soul Strike", maxLevel: 10, type: "normal" },
+        stoneCurse: { name: "Stone Curse", maxLevel: 10, type: "normal" },
+        thunderstorm: { name: "Thunderstorm", maxLevel: 10, type: "normal" },
+
+        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest" }
+    },
+
+    "Archer": {
+        arrowShower: { name: "Arrow Shower", maxLevel: 10, type: "normal" },
+        doubleStrafe: { name: "Double Strafe", maxLevel: 10, type: "normal" },
+        improveConcentration: { name: "Improve Concentration", maxLevel: 10, type: "normal" },
+        owlsEye: { name: "Owl's Eye", maxLevel: 10, type: "normal" },
+        vulturesEye: { name: "Vulture's Eye", maxLevel: 10, type: "normal" },
+
+        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest" },
+        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest" }
+    },
+
+    "Merchant": {
+        discount: { name: "Discount", maxLevel: 10, type: "normal" },
+        enlargeWeight: { name: "Enlarge Weight Limit", maxLevel: 10, type: "normal" },
+        itemAppraisal: { name: "Item Appraisal", maxLevel: 1, type: "normal" },
+        mammonite: { name: "Mammonite", maxLevel: 10, type: "normal" },
+        overcharge: { name: "Overcharge", maxLevel: 10, type: "normal" },
+        pushcart: { name: "Pushcart", maxLevel: 10, type: "normal" },
+        vending: { name: "Vending", maxLevel: 10, type: "normal" },
+
+        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest" },
+        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest" },
+        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest" }
+    },
+
+    "Thief": {
+        detoxify: { name: "Detoxify", maxLevel: 1, type: "normal" },
+        doubleAttack: { name: "Double Attack", maxLevel: 10, type: "normal" },
+        envenom: { name: "Envenom", maxLevel: 10, type: "normal" },
+        hiding: { name: "Hiding", maxLevel: 10, type: "normal" },
+        improveDodge: { name: "Improve Dodge", maxLevel: 10, type: "normal" },
+        steal: { name: "Steal", maxLevel: 10, type: "normal" },
+
+        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest" },
+        findStone: { name: "Find Stone", maxLevel: 1, type: "quest" },
+        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest" },
+        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest" }
+    },
+
+    "Acolyte": {
+        angelus: { name: "Angelus", maxLevel: 10, type: "normal" },
+        aquaBenedicta: { name: "Aqua Benedicta", maxLevel: 1, type: "normal" },
+        blessing: { name: "Blessing", maxLevel: 10, type: "normal" },
+        cure: { name: "Cure", maxLevel: 1, type: "normal" },
+        decreaseAgi: { name: "Decrease AGI", maxLevel: 10, type: "normal" },
+        demonBane: { name: "Demon Bane", maxLevel: 10, type: "normal" },
+        divineProtection: { name: "Divine Protection", maxLevel: 10, type: "normal" },
+        heal: { name: "Heal", maxLevel: 10, type: "normal" },
+        increaseAgi: { name: "Increase AGI", maxLevel: 10, type: "normal" },
+        pneuma: { name: "Pneuma", maxLevel: 1, type: "normal" },
+        ruwach: { name: "Ruwach", maxLevel: 1, type: "normal" },
+        signumCrusis: { name: "Signum Crusis", maxLevel: 10, type: "normal" },
+        teleport: { name: "Teleport", maxLevel: 2, type: "normal" },
+        warpPortal: { name: "Warp Portal", maxLevel: 4, type: "normal" },
+
+        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest" }
+    }
+};
+const skillConnections = {
+    "Novice": [
+        ["basicSkill", "firstAid"],
+        ["basicSkill", "playDead"]
+    ],
+
+    "Swordsman": [
+        ["bash", "magnumBreak"],
+        ["bash", "provoke"],
+        ["provoke", "endure"],
+        ["swordMastery", "twoHandedMastery"]
+    ]
+    // you can expand later per job
+};
+function formatSkillIcon(name) {
+    return name
+        .toLowerCase()       // lowercase
+        .replace(/\s+/g, '') // remove spaces
+        .replace(/[^a-z0-9]/g, ''); // remove special characters
+}
+function updateSkillUI() {
+    const job = document.getElementById("job").value;
+    const treeBody = document.getElementById("skillTreeBody");
+
+    treeBody.innerHTML = "";
+
+    const skills = jobSkills[job];
+
+
+    if (!skills || Object.keys(skills).length === 0) {
+        treeBody.innerHTML = `<p style="color:#888; grid-column:1/-1; text-align:center;">
+            No skills available for ${job}
+        </p>`;
+        return;
+    }
+
+    const normalSkills = [];
+    const questSkills = [];
+
+    // 🔹 Separate skills
+    for (let skillName in skills) {
+        if (!(skillName in playerSkills)) playerSkills[skillName] = 0;
+
+        const skill = skills[skillName];
+
+        if (skill.type === "quest") {
+            questSkills.push([skillName, skill]);
+        } else {
+            normalSkills.push([skillName, skill]);
+        }
+    }
+
+    // 🔹 Skill element creator (reuse logic)
+    function createSkillElement(skillName, skill) {
+        const el = document.createElement("div");
+        el.className = "skill";
+        el.dataset.skill = skillName;
+
+        el.innerHTML = `
+            <img src="skills/${formatSkillIcon(skillName)}.png" onerror="this.src='skills/default.png'">
+            <span class="skill-level">${playerSkills[skillName]}/${skill.maxLevel}</span>
+        `;
+
+        const state = getSkillState(skillName);
+        el.classList.add(state);
+
+        el.addEventListener("click", () => {
+            upgradeSkill(skillName);
+        });
+
+        return el;
+    }
+
+    // 🔹 Render NORMAL skills
+    normalSkills.forEach(([skillName, skill]) => {
+        treeBody.appendChild(createSkillElement(skillName, skill));
+    });
+
+    // 🔹 QUEST SKILLS HEADER
+    if (questSkills.length > 0) {
+        const header = document.createElement("div");
+        header.innerText = "QUEST SKILLS";
+        header.style.gridColumn = "span 5";
+        header.style.textAlign = "center";
+        header.style.color = "gold";
+        header.style.marginTop = "10px";
+
+        treeBody.appendChild(header);
+    }
+
+    // 🔹 Render QUEST skills
+    questSkills.forEach(([skillName, skill]) => {
+        treeBody.appendChild(createSkillElement(skillName, skill));
+    });
+
+    document.getElementById("skillPoints").innerText = `Skill Points: ${skillPoints}`;
+    setTimeout(drawSkillConnections, 50);
+}
+function drawSkillConnections() {
+    const job = document.getElementById("job").value;
+    const layer = document.getElementById("skillConnections");
+
+    if (!layer) return;
+
+    layer.innerHTML = "";
+
+    const connections = skillConnections[job];
+    if (!connections) return;
+
+    connections.forEach(([from, to]) => {
+        const fromEl = document.querySelector(`[data-skill="${from}"]`);
+        const toEl = document.querySelector(`[data-skill="${to}"]`);
+
+        if (!fromEl || !toEl) return;
+
+        const fromRect = fromEl.getBoundingClientRect();
+        const toRect = toEl.getBoundingClientRect();
+        const parentRect = layer.getBoundingClientRect();
+
+        const x1 = fromRect.left + fromRect.width / 2 - parentRect.left;
+        const y1 = fromRect.top + fromRect.height / 2 - parentRect.top;
+        const x2 = toRect.left + toRect.width / 2 - parentRect.left;
+        const y2 = toRect.top + toRect.height / 2 - parentRect.top;
+
+        const length = Math.hypot(x2 - x1, y2 - y1);
+        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+        const line = document.createElement("div");
+        line.className = "arrow-line";
+
+        line.style.width = `${length}px`;
+        line.style.left = `${x1}px`;
+        line.style.top = `${y1}px`;
+        line.style.transform = `rotate(${angle}deg)`;
+
+        layer.appendChild(line);
+    });
+}
+
+function getSkillState(skillName) {
+    const level = playerSkills[skillName];
+
+    if (level > 0) return "learned";
+
+    if (skillPoints > 0) return "available";
+
+    return "locked";
+}
+
+function upgradeSkill(skillName) {
+    const job = document.getElementById("job").value;
+    const skill = jobSkills[job][skillName];
+
+    if (!skill) return;
+    if (skillPoints <= 0) return;
+    if (getSkillState(skillName) === "locked") return;
+    playerSkills[skillName]++;
+    skillPoints--;
+
+    updateSkillUI();
+}

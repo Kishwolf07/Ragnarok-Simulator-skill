@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,240 +6,217 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="status-panel">
+    <h2>Ragnarok Stat Simulator</h2>
 
-    <div class="app-container">
+    <div class="main-layout">
+        <div class="left-panel">
+            <div class="gender-switch">
+                <label class="switch">
+                    <input type="checkbox" id="genderToggle" onchange="updateCharacterImage();">
+                    <span class="slider">
+                        <span class="gender-symbol">♂</span>
+                    </span>
+                </label>
+            </div>
 
-        <!-- ✅ Tabs ABOVE panel -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('stats-tab', event)">Stats</button>
-            <button class="tab-btn" onclick="showTab('skills-tab', event)">Skill Tree</button>
+            <div class="character-box">
+                <img src="jobs/novice.gif" alt="character animation" class="character-gif">
+            </div>
+
+            <div class="hp-sp-box">
+                <div class="bar-row">
+                    <span>Weight: <span id="weight">2000</span></span>
+                </div>
+                <div class="bar-row">
+                    <span>HP <span id="hpValue">0</span></span>
+                    <div class="custom-bar">
+                        <div id="hpBar" class="fill hp-fill"><span id="hpText">0%</span></div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                 <span>SP <span id="spValue">0</span></span>
+                    <div class="custom-bar">
+                        <div id="spBar" class="fill sp-fill"><span id="spText">0%</span></div>
+                    </div>
+                </div>
+                <div class="regen-info">
+                    <span>HP Regen: <span id="hpRegen">0</span>/6s</span>
+                    <span>SP Regen: <span id="spRegen">0</span>/8s</span>
+                </div>
+            </div>
         </div>
-    
-        <div class="status-panel">
-            <h2>Ragnarok Stat Simulator</h2>
-    
-            <!-- ✅ STATS TAB -->
-            <div id="stats-tab" class="tab-content active">
-                <div class="main-layout">
 
-                    <!-- LEFT PANEL -->
-                    <div class="left-panel">
-                        <div class="gender-switch">
-                            <label class="switch">
-                                <input type="checkbox" id="genderToggle" onchange="updateCharacterImage();">
-                                <span class="slider">
-                                    <span class="gender-symbol">♂</span>
-                                </span>
-                            </label>
+        <div class="right-panel">
+            <div class="panel-tabs">
+                <button id="tab-stats" class="tab-btn active" onclick="switchPanel('stats')">STATS</button>
+                <button id="tab-skills" class="tab-btn" onclick="switchPanel('skills')">SKILLS</button>
+            </div>
+
+            <div class="panel-content-wrapper">
+                <div id="statsPanel" class="tab-content active">
+                    <div class="character-setup">
+                        <h3>Character Setup</h3>
+                        <div class="setup-row">
+                            <label>Base Level:</label>
+                            <input type="number" id="baseLevel" value="1" min="1" max="99" oninput="updateStats();">
                         </div>
 
-                        <div class="character-box">
-                            <img src="jobs/novice.gif" alt="character animation" class="character-gif">
+                        <div class="setup-row">
+                            <label>Job Level:</label>
+                            <input type="number" id="jobLevel" value="1" min="1" max="50" oninput="updateStats();">
                         </div>
 
-                        <div class="hp-sp-box">
-                            <div class="bar-row">
-                                <span>Weight: <span id="weight">2000</span></span>
-                            </div>
-                            <div class="bar-row">
-                                <span>HP <span id="hpValue">0</span></span>
-                                <div class="custom-bar">
-                                    <div id="hpBar" class="fill hp-fill"><span id="hpText">0%</span></div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <span>SP <span id="spValue">0</span></span>
-                                <div class="custom-bar">
-                                    <div id="spBar" class="fill sp-fill"><span id="spText">0%</span></div>
-                                </div>
-                            </div>
-                            <div class="regen-info">
-                                <span>HP Regen: <span id="hpRegen">0</span>/6s</span>
-                                <span>SP Regen: <span id="spRegen">0</span>/8s</span>
-                            </div>
+                        <div class="setup-row">
+                            <label>Job:</label>
+                            <select id="job" onchange="updateCharacterImage(); updateWeaponOptions(); updateStats(); renderSkillTree();">
+                                <option>Novice</option>
+                                <option>Swordsman</option>
+                                <option>Mage</option>
+                                <option>Archer</option>
+                                <option>Thief</option>
+                                <option>Acolyte</option>
+                                <option>Merchant</option>
+                            </select>
+                        </div>
+
+                        <div class="setup-row">
+                            <label>Weapon:</label>
+                            <select id="weapon" onchange="updateStats();"></select>
                         </div>
                     </div>
 
-                    <!-- RIGHT PANEL -->
-                    <div class="right-panel">
-                        <div class="character-setup">
-                            <h3>Character Setup</h3>
-                            <div class="setup-row">
-                                <label>Base Level:</label>
-                                <input type="number" id="baseLevel" value="1" min="1" max="99" oninput="updateStats();">
-                            </div>
-
-                            <div class="setup-row">
-                                <label>Job Level:</label>
-                                <input type="number" id="jobLevel" value="1" min="1" max="50" oninput="updateStats();">
-                            </div>
-
-                            <div class="setup-row">
-                                <label>Job:</label>
-                                <select id="job" onchange="updateCharacterImage(); updateWeaponOptions(); updateStats(); updateSkillTree();">
-                                    <option>Novice</option>
-                                    <option>Swordsman</option>
-                                    <option>Mage</option>
-                                    <option>Archer</option>
-                                    <option>Thief</option>
-                                    <option>Acolyte</option>
-                                    <option>Merchant</option>
-                                </select>
-                            </div>
-
-                            <div class="setup-row">
-                                <label>Weapon:</label>
-                                <select id="weapon" onchange="updateStats();"></select>
-                            </div>
+                    <div class="tables-container">
+                        <div class="table-box">
+                            <h4>Stats</h4>
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th>Stat</th>
+                                        <th>Value</th>
+                                        <th>Req</th>
+                                        <th>Job Bonus</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>STR</td>
+                                        <td><input type="number" id="str" value="1" min="1" oninput="updateStats('str');"></td>
+                                        <td id="strReq">2</td>
+                                        <td id="strBonus">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>AGI</td>
+                                        <td><input type="number" id="agi" value="1" min="1" oninput="updateStats('agi');"></td>
+                                        <td id="agiReq">2</td>
+                                        <td id="agiBonus">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>VIT</td>
+                                        <td><input type="number" id="vit" value="1" min="1" oninput="updateStats('vit');"></td>
+                                        <td id="vitReq">2</td>
+                                        <td id="vitBonus">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>INT</td>
+                                        <td><input type="number" id="int" value="1" min="1" oninput="updateStats('int');"></td>
+                                        <td id="intReq">2</td>
+                                        <td id="intBonus">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DEX</td>
+                                        <td><input type="number" id="dex" value="1" min="1" oninput="updateStats('dex');"></td>
+                                        <td id="dexReq">2</td>
+                                        <td id="dexBonus">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>LUK</td>
+                                        <td><input type="number" id="luk" value="1" min="1" oninput="updateStats('luk');"></td>
+                                        <td id="lukReq">2</td>
+                                        <td id="lukBonus">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
-                        <div class="tables-container">
-                            <div class="table-box">
-                                <h4>Stats</h4>
-                                <table class="stats-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Stat</th>
-                                            <th>Value</th>
-                                            <th>Req</th>
-                                            <th>Job Bonus</th>
-                                        </tr>
-                                    </thead>
+                        <div class="table-box">
+                            <h4>Status Information</h4>
+                            <div class="status-columns">
+                                <table class="status-table">
                                     <tbody>
                                         <tr>
-                                            <td>STR</td>
-                                            <td><input type="number" id="str" value="1" min="1" oninput="updateStats('str');"></td>
-                                            <td id="strReq">2</td>
-                                            <td id="strBonus">0</td>
+                                            <th><img src="icons/atk.png" class="stat-icon">ATK</th>
+                                            <td id="atk">1 + 0</td>
                                         </tr>
                                         <tr>
-                                            <td>AGI</td>
-                                            <td><input type="number" id="agi" value="1" min="1" oninput="updateStats('agi');"></td>
-                                            <td id="agiReq">2</td>
-                                            <td id="agiBonus">0</td>
+                                            <th><img src="icons/matk.png" class="stat-icon">MATK</th>
+                                            <td id="matk">1~1</td>
                                         </tr>
                                         <tr>
-                                            <td>VIT</td>
-                                            <td><input type="number" id="vit" value="1" min="1" oninput="updateStats('vit');"></td>
-                                            <td id="vitReq">2</td>
-                                            <td id="vitBonus">0</td>
+                                            <th><img src="icons/hit.png" class="stat-icon">HIT</th>
+                                            <td id="hit">2</td>
                                         </tr>
                                         <tr>
-                                            <td>INT</td>
-                                            <td><input type="number" id="int" value="1" min="1" oninput="updateStats('int');"></td>
-                                            <td id="intReq">2</td>
-                                            <td id="intBonus">0</td>
+                                            <th><img src="icons/crit.png" class="stat-icon">CRIT</th>
+                                            <td id="critical">1</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="status-table">
+                                    <tbody>
+                                        <tr>
+                                            <th><img src="icons/def.png" class="stat-icon">DEF</th>
+                                            <td id="def">0 + 1</td>
                                         </tr>
                                         <tr>
-                                            <td>DEX</td>
-                                            <td><input type="number" id="dex" value="1" min="1" oninput="updateStats('dex');"></td>
-                                            <td id="dexReq">2</td>
-                                            <td id="dexBonus">0</td>
+                                            <th><img src="icons/mdef.png" class="stat-icon">MDEF</th>
+                                            <td id="mdef">0 + 1</td>
                                         </tr>
                                         <tr>
-                                            <td>LUK</td>
-                                            <td><input type="number" id="luk" value="1" min="1" oninput="updateStats('luk');"></td>
-                                            <td id="lukReq">2</td>
-                                            <td id="lukBonus">0</td>
+                                            <th><img src="icons/flee.png" class="stat-icon">FLEE</th>
+                                            <td id="flee">0 + 1</td>
+                                        </tr>
+                                        <tr>
+                                            <th><img src="icons/aspd.png" class="stat-icon">ASPD</th>
+                                            <td id="aspd">0</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-
-                            <div class="table-box">
-                                <h4>Status Information</h4>
-                                <div class="status-columns">
-                                    <table class="status-table">
-                                        <tbody>
-                                            <tr>
-                                                <th><img src="icons/atk.png" class="stat-icon">ATK</th>
-                                                <td id="atk">1 + 0</td>
-                                            </tr>
-                                            <tr>
-                                                <th><img src="icons/matk.png" class="stat-icon">MATK</th>
-                                                <td id="matk">1~1</td>
-                                            </tr>
-                                            <tr>
-                                                <th><img src="icons/hit.png" class="stat-icon">HIT</th>
-                                                <td id="hit">2</td>
-                                            </tr>
-                                            <tr>
-                                                <th><img src="icons/crit.png" class="stat-icon">CRIT</th>
-                                                <td id="critical">1</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <table class="status-table">
-                                        <tbody>
-                                            <tr>
-                                                <th><img src="icons/def.png" class="stat-icon">DEF</th>
-                                                <td id="def">0 + 1</td>
-                                            </tr>
-                                            <tr>
-                                                <th><img src="icons/mdef.png" class="stat-icon">MDEF</th>
-                                                <td id="mdef">0 + 1</td>
-                                            </tr>
-                                            <tr>
-                                                <th><img src="icons/flee.png" class="stat-icon">FLEE</th>
-                                                <td id="flee">0 + 1</td>
-                                            </tr>
-                                            <tr>
-                                                <th><img src="icons/aspd.png" class="stat-icon">ASPD</th>
-                                                <td id="aspd">0</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="status-points">
-                                    Remaining Points: <span id="statusPoints">48</span>                       
-                                </div>
-                                <button class="reset-button" onclick="resetCharacter();">Reset</button>
+                            <div class="status-points">
+                                Remaining Points: <span id="statusPoints">48</span>                       
                             </div>
+                            <button class="reset-button" onclick="resetCharacter();">Reset</button>
                         </div>
                     </div>
-
                 </div>
-            </div>
 
-            <!-- ✅ SKILLS TAB -->
-            <div id="skills-tab" class="tab-content">
-                <div class="skill-tree">
-                    <h3 id="skillTitle">Skill Tree</h3>
-                    <div id="skillContainer"></div>
-                    <div class="quest-box">
-                        <h4>Quest Skills</h4>
-                        <ul id="questSkills"></ul>
-                    </div>
-                </div>
-            </div>
+                <div id="skillsPanel" class="tab-content">
+                    <div class="table-box skill-tree-box">
+                        <div class="skill-header-info">
+                            <h4>Skill Tree</h4>
+                            <span id="skillPoints" class="skill-points-badge">Skill Points: 0</span>
+                        </div>
+                        <div id="skillTreeWrapper" style="position:relative;">
+    <div id="skillTreeBody" class="skill-tree-grid"></div>
+    <div id="skillConnections"></div>
+</div>
 
-        </div>
+            </div> 
+        </div> 
     </div>
+</div>
 
 <script src="script.js"></script>
 <script>
     window.onload = function() {
-        updateWeaponOptions();
-        updateCharacterImage();
-        updateStats();
-        updateSkillTree();
-    }
+        // Initialize Data
+        if(typeof updateWeaponOptions === 'function') updateWeaponOptions();
+        if(typeof updateCharacterImage === 'function') updateCharacterImage();
+        if(typeof updateStats === 'function') updateStats();
 
-    function showTab(tabId, event) {
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        document.getElementById(tabId).classList.add('active');
-        event.target.classList.add('active');
-
-        if (tabId === "skills-tab") {
-            updateSkillTree();
-        }
+        // Ensure we start on the Stats tab visually
+        if(typeof switchPanel === 'function') switchPanel('stats');
     }
 </script>
 </body>
