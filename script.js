@@ -791,34 +791,38 @@ function updateSkillUI() {
 
 function bindSkillTooltips() {
     const skills = document.querySelectorAll('.skill');
-    
+
+    // Create a single tooltip element appended to body
+    let tooltip = document.createElement('div');
+    tooltip.className = 'skill-tooltip';
+    document.body.appendChild(tooltip);
+
     skills.forEach(skillEl => {
         const skillName = skillEl.dataset.skill;
         const skill = jobSkills[document.getElementById("job").value][skillName];
         if (!skill) return;
 
-        // Remove any existing tooltip
-        let tooltip = skillEl.querySelector('.skill-tooltip');
-        if (!tooltip) {
-            tooltip = document.createElement('div');
-            tooltip.className = 'skill-tooltip';
-            skillEl.appendChild(tooltip);
-        }
-
-        tooltip.innerHTML = `
-            <strong>${skill.name}</strong><br>
-            <em>Max Level: ${skill.maxLevel}</em><br>
-            ${skill.desc}
-        `;
-
-        // Show/Hide on hover
+        // Hover: show tooltip
         skillEl.onmouseenter = () => {
-            tooltip.style.opacity = 1;
-            tooltip.style.transform = 'scale(1)';
+            tooltip.innerHTML = `
+                <strong>${skill.name}</strong><br>
+                <em>Max Level: ${skill.maxLevel}</em><br>
+                ${skill.desc}
+            `;
+            tooltip.classList.add('show');
         };
+
+        // Hover out: hide tooltip
         skillEl.onmouseleave = () => {
-            tooltip.style.opacity = 0;
-            tooltip.style.transform = 'scale(0.8)';
+            tooltip.classList.remove('show');
+        };
+
+        // Move tooltip near mouse
+        skillEl.onmousemove = (e) => {
+            const offsetX = 14; // distance from mouse pointer
+            const offsetY = -16;
+            tooltip.style.left = e.clientX + offsetX + 'px';
+            tooltip.style.top = e.clientY + offsetY + 'px';
         };
     });
 }

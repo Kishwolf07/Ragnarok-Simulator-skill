@@ -627,20 +627,41 @@ input:checked + .slider:before {
 }
 
 .skill-tooltip {
-    position: absolute;
-    bottom: 100%; /* show above the skill icon */
-    left: 50%;
-    transform: translate(-50%, -110%) scale(0.8);
-    background-color: #1e1e2f;
+    position: fixed; /* follow the mouse */
+    max-width: 300px;
+    min-width: 120px;
+    background-color: #1e1e2f; /* solid card */
     color: #fff;
-    padding: 6px 10px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    font-size: 12px;
-    text-align: center;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: left;
+    pointer-events: none;
+    white-space: normal;
+    word-break: break-word;
     opacity: 0;
-    pointer-events: none; /* allow hovering over skill without triggering tooltip */
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    white-space: nowrap;
+    transform: scale(0.85);
+    transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.3s ease;
     z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #0af; /* subtle glow */
+}
+
+.skill-tooltip.show {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 6px 18px rgba(0, 170, 255, 0.8), 0 0 12px rgba(0, 170, 255, 0.5);
+}
+
+.skill-tooltip strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.skill-tooltip em {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: #0af;
 }
