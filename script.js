@@ -51,6 +51,8 @@ function switchPanel(panelName) {
         }
     }
 }
+
+
 // ===============================
 // STAT POINT SYSTEM
 // ===============================
@@ -373,101 +375,103 @@ let currentJobTracked = "Novice";
 // skills each job
 const jobSkills = {
     "Novice": {
-        basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal" },
-        firstAid: { name: "First Aid", maxLevel: 1, type: "quest" },
-        playDead: { name: "Play Dead", maxLevel: 1, type: "quest" }
+        basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal", desc: "A simple beginner skill." },
+
+        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Recover small HP instantly." },
+        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to be dead to avoid attacks." }
     },
 
     "Swordsman": {
-        bash: { name: "Bash", maxLevel: 10, type: "normal" },
-        endure: { name: "Endure", maxLevel: 10, type: "normal" },
-        increaseHP: { name: "Increase HP Recovery", maxLevel: 10, type: "normal" },
-        magnumBreak: { name: "Magnum Break", maxLevel: 10, type: "normal" },
-        provoke: { name: "Provoke", maxLevel: 10, type: "normal" },
-        swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal" },
-        twoHandedMastery: { name: "Two-Handed Sword Mastery", maxLevel: 10, type: "normal" },
+        bash: { name: "Bash", maxLevel: 10, type: "normal", desc: "Deal physical damage to a single enemy." },
+        endure: { name: "Endure", maxLevel: 10, type: "normal", desc: "Reduce incoming damage temporarily." },
+        increaseHP: { name: "Increase HP Recovery", maxLevel: 10, type: "normal", desc: "Boost natural HP regeneration." },
+        magnumBreak: { name: "Magnum Break", maxLevel: 10, type: "normal", desc: "Attack all enemies nearby with damage and knockback." },
+        provoke: { name: "Provoke", maxLevel: 10, type: "normal", desc: "Taunt enemy to attack you." },
+        swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage with swords." },
+        twoHandedMastery: { name: "Two-Handed Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage when using two-handed swords." },
 
-        berserk: { name: "Berserk", maxLevel: 1, type: "quest" },
-        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest" },
-        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest" }
+        berserk: { name: "Berserk", maxLevel: 1, type: "quest", desc: "Boost attack power at the cost of defense." },
+        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest", desc: "One powerful strike to finish enemies." },
+        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest", desc: "Allows HP regeneration even while moving." }
     },
 
     "Mage": {
-        coldBolt: { name: "Cold Bolt", maxLevel: 10, type: "normal" },
-        fireBall: { name: "Fire Ball", maxLevel: 10, type: "normal" },
-        fireBolt: { name: "Fire Bolt", maxLevel: 10, type: "normal" },
-        fireWall: { name: "Fire Wall", maxLevel: 10, type: "normal" },
-        frostDiver: { name: "Frost Diver", maxLevel: 10, type: "normal" },
-        spRecovery: { name: "Increase SP Recovery", maxLevel: 10, type: "normal" },
-        lightningBolt: { name: "Lightning Bolt", maxLevel: 10, type: "normal" },
-        napalmBeat: { name: "Napalm Beat", maxLevel: 10, type: "normal" },
-        safetyWall: { name: "Safety Wall", maxLevel: 10, type: "normal" },
-        sight: { name: "Sight", maxLevel: 1, type: "normal" },
-        soulStrike: { name: "Soul Strike", maxLevel: 10, type: "normal" },
-        stoneCurse: { name: "Stone Curse", maxLevel: 10, type: "normal" },
-        thunderstorm: { name: "Thunderstorm", maxLevel: 10, type: "normal" },
+        coldBolt: { name: "Cold Bolt", maxLevel: 10, type: "normal", desc: "Ice attack to freeze or slow enemies." },
+        fireBall: { name: "Fire Ball", maxLevel: 10, type: "normal", desc: "Fire magic to hit a single enemy." },
+        fireBolt: { name: "Fire Bolt", maxLevel: 10, type: "normal", desc: "Quick fire projectile spell." },
+        fireWall: { name: "Fire Wall", maxLevel: 10, type: "normal", desc: "Summon a wall of fire to burn enemies." },
+        frostDiver: { name: "Frost Diver", maxLevel: 10, type: "normal", desc: "Ice AoE damage to multiple enemies." },
+        spRecovery: { name: "Increase SP Recovery", maxLevel: 10, type: "normal", desc: "Boost natural SP regeneration." },
+        lightningBolt: { name: "Lightning Bolt", maxLevel: 10, type: "normal", desc: "Deal electric damage to a single enemy." },
+        napalmBeat: { name: "Napalm Beat", maxLevel: 10, type: "normal", desc: "Area fire attack on enemies." },
+        safetyWall: { name: "Safety Wall", maxLevel: 10, type: "normal", desc: "Block melee attacks from enemies." },
+        sight: { name: "Sight", maxLevel: 1, type: "normal", desc: "Detect hidden enemies nearby." },
+        soulStrike: { name: "Soul Strike", maxLevel: 10, type: "normal", desc: "Magic attack that ignores defense." },
+        stoneCurse: { name: "Stone Curse", maxLevel: 10, type: "normal", desc: "Petrify a single enemy temporarily." },
+        thunderstorm: { name: "Thunderstorm", maxLevel: 10, type: "normal", desc: "Electric AoE damage to enemies." },
 
-        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest" }
+        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest", desc: "Boost defense by covering body in magic." }
     },
 
     "Archer": {
-        arrowShower: { name: "Arrow Shower", maxLevel: 10, type: "normal" },
-        doubleStrafe: { name: "Double Strafe", maxLevel: 10, type: "normal" },
-        improveConcentration: { name: "Improve Concentration", maxLevel: 10, type: "normal" },
-        owlsEye: { name: "Owl's Eye", maxLevel: 10, type: "normal" },
-        vulturesEye: { name: "Vulture's Eye", maxLevel: 10, type: "normal" },
+        arrowShower: { name: "Arrow Shower", maxLevel: 10, type: "normal", desc: "Shoot multiple arrows at enemies." },
+        doubleStrafe: { name: "Double Strafe", maxLevel: 10, type: "normal", desc: "Quickly shoot two arrows at a single enemy." },
+        improveConcentration: { name: "Improve Concentration", maxLevel: 10, type: "normal", desc: "Increase critical rate of arrows." },
+        owlsEye: { name: "Owl's Eye", maxLevel: 10, type: "normal", desc: "Increase ranged attack range and accuracy." },
+        vulturesEye: { name: "Vulture's Eye", maxLevel: 10, type: "normal", desc: "Further increase accuracy and critical hit chance." },
 
-        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest" },
-        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest" }
+        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest", desc: "Create custom arrows." },
+        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest", desc: "Shoot arrows that knock back enemies." }
     },
 
     "Merchant": {
-        discount: { name: "Discount", maxLevel: 10, type: "normal" },
-        enlargeWeight: { name: "Enlarge Weight Limit", maxLevel: 10, type: "normal" },
-        itemAppraisal: { name: "Item Appraisal", maxLevel: 1, type: "normal" },
-        mammonite: { name: "Mammonite", maxLevel: 10, type: "normal" },
-        overcharge: { name: "Overcharge", maxLevel: 10, type: "normal" },
-        pushcart: { name: "Pushcart", maxLevel: 10, type: "normal" },
-        vending: { name: "Vending", maxLevel: 10, type: "normal" },
+        discount: { name: "Discount", maxLevel: 10, type: "normal", desc: "Reduce shop prices for purchases." },
+        enlargeWeight: { name: "Enlarge Weight Limit", maxLevel: 10, type: "normal", desc: "Carry more items at once." },
+        itemAppraisal: { name: "Item Appraisal", maxLevel: 1, type: "normal", desc: "Identify unknown items." },
+        mammonite: { name: "Mammonite", maxLevel: 10, type: "normal", desc: "Deal earth damage to enemies." },
+        overcharge: { name: "Overcharge", maxLevel: 10, type: "normal", desc: "Increase damage of your weapons temporarily." },
+        pushcart: { name: "Pushcart", maxLevel: 10, type: "normal", desc: "Move your cart faster." },
+        vending: { name: "Vending", maxLevel: 10, type: "normal", desc: "Sell items automatically using vending machine." },
 
-        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest" },
-        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest" },
-        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest" }
+        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest", desc: "Spin your cart to damage nearby enemies." },
+        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest", desc: "Switch to a different cart style." },
+        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest", desc: "Confuse enemies around you." }
     },
 
     "Thief": {
-        detoxify: { name: "Detoxify", maxLevel: 1, type: "normal" },
-        doubleAttack: { name: "Double Attack", maxLevel: 10, type: "normal" },
-        envenom: { name: "Envenom", maxLevel: 10, type: "normal" },
-        hiding: { name: "Hiding", maxLevel: 10, type: "normal" },
-        improveDodge: { name: "Improve Dodge", maxLevel: 10, type: "normal" },
-        steal: { name: "Steal", maxLevel: 10, type: "normal" },
+        detoxify: { name: "Detoxify", maxLevel: 1, type: "normal", desc: "Remove poison effects." },
+        doubleAttack: { name: "Double Attack", maxLevel: 10, type: "normal", desc: "Attack twice in one turn." },
+        envenom: { name: "Envenom", maxLevel: 10, type: "normal", desc: "Add poison effect to your attacks." },
+        hiding: { name: "Hiding", maxLevel: 10, type: "normal", desc: "Hide from enemies to avoid attacks." },
+        improveDodge: { name: "Improve Dodge", maxLevel: 10, type: "normal", desc: "Increase chance to dodge attacks." },
+        steal: { name: "Steal", maxLevel: 10, type: "normal", desc: "Steal items from enemies." },
 
-        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest" },
-        findStone: { name: "Find Stone", maxLevel: 1, type: "quest" },
-        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest" },
-        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest" }
+        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest", desc: "Quickly move behind the enemy." },
+        findStone: { name: "Find Stone", maxLevel: 1, type: "quest", desc: "Locate rare stones or items." },
+        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest", desc: "Blind enemies temporarily." },
+        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw stones to damage or interrupt enemies." }
     },
 
     "Acolyte": {
-        angelus: { name: "Angelus", maxLevel: 10, type: "normal" },
-        aquaBenedicta: { name: "Aqua Benedicta", maxLevel: 1, type: "normal" },
-        blessing: { name: "Blessing", maxLevel: 10, type: "normal" },
-        cure: { name: "Cure", maxLevel: 1, type: "normal" },
-        decreaseAgi: { name: "Decrease AGI", maxLevel: 10, type: "normal" },
-        demonBane: { name: "Demon Bane", maxLevel: 10, type: "normal" },
-        divineProtection: { name: "Divine Protection", maxLevel: 10, type: "normal" },
-        heal: { name: "Heal", maxLevel: 10, type: "normal" },
-        increaseAgi: { name: "Increase AGI", maxLevel: 10, type: "normal" },
-        pneuma: { name: "Pneuma", maxLevel: 1, type: "normal" },
-        ruwach: { name: "Ruwach", maxLevel: 1, type: "normal" },
-        signumCrusis: { name: "Signum Crusis", maxLevel: 10, type: "normal" },
-        teleport: { name: "Teleport", maxLevel: 2, type: "normal" },
-        warpPortal: { name: "Warp Portal", maxLevel: 4, type: "normal" },
+        angelus: { name: "Angelus", maxLevel: 10, type: "normal", desc: "Increase defense of party members." },
+        aquaBenedicta: { name: "Aqua Benedicta", maxLevel: 1, type: "normal", desc: "Holy water effect for protection." },
+        blessing: { name: "Blessing", maxLevel: 10, type: "normal", desc: "Increase STR, AGI, and INT temporarily." },
+        cure: { name: "Cure", maxLevel: 1, type: "normal", desc: "Heal minor wounds of a single target." },
+        decreaseAgi: { name: "Decrease AGI", maxLevel: 10, type: "normal", desc: "Lower enemy AGI temporarily." },
+        demonBane: { name: "Demon Bane", maxLevel: 10, type: "normal", desc: "Extra damage to demon-type enemies." },
+        divineProtection: { name: "Divine Protection", maxLevel: 10, type: "normal", desc: "Reduce damage to a single ally." },
+        heal: { name: "Heal", maxLevel: 10, type: "normal", desc: "Restore HP of a single ally." },
+        increaseAgi: { name: "Increase AGI", maxLevel: 10, type: "normal", desc: "Increase AGI of a single ally." },
+        pneuma: { name: "Pneuma", maxLevel: 1, type: "normal", desc: "Remove fear effect." },
+        ruwach: { name: "Ruwach", maxLevel: 1, type: "normal", desc: "Remove curse from a target." },
+        signumCrusis: { name: "Signum Crusis", maxLevel: 10, type: "normal", desc: "Holy magic attack against undead enemies." },
+        teleport: { name: "Teleport", maxLevel: 2, type: "normal", desc: "Instantly move to a known location." },
+        warpPortal: { name: "Warp Portal", maxLevel: 4, type: "normal", desc: "Create a portal for party members to teleport." },
 
-        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest" }
+        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest", desc: "Attack undead enemies with holy magic." }
     }
 };
+// SKILL CONNECTIONS (ARROWS)
 const skillConnections = {
     "Novice": [
         ["basicSkill", "firstAid"],
@@ -478,16 +482,246 @@ const skillConnections = {
         ["bash", "magnumBreak"],
         ["bash", "provoke"],
         ["provoke", "endure"],
-        ["swordMastery", "twoHandedMastery"]
+        ["endure", "twoHandedMastery"],
+        ["bash", "swordMastery"],
+        ["swordMastery", "increaseHP"]
+    ],
+
+    "Mage": [
+        ["fireBolt", "fireBall"],
+        ["fireBolt", "fireWall"],
+
+        ["fireBall", "napalmBeat"],
+        ["napalmBeat", "soulStrike"],
+
+        ["fireWall", "safetyWall"],
+
+        ["coldBolt", "frostDiver"],
+        ["lightningBolt", "thunderstorm"],
+
+        ["soulStrike", "stoneCurse"],
+        ["stoneCurse", "spRecovery"],
+
+        ["safetyWall", "energyCoat"]
+    ],
+
+    "Archer": [
+        ["owlsEye", "vulturesEye"],
+        ["vulturesEye", "doubleStrafe"],
+        ["vulturesEye", "arrowShower"],
+        ["doubleStrafe", "improveConcentration"],
+        ["arrowShower", "improveConcentration"]
+    ],
+
+    "Merchant": [
+        ["discount", "overcharge"],
+        ["overcharge", "vending"],
+
+        ["discount", "enlargeWeight"],
+        ["enlargeWeight", "pushcart"],
+        ["pushcart", "mammonite"],
+
+        ["pushcart", "itemAppraisal"]
+    ],
+
+    "Thief": [
+        ["doubleAttack", "improveDodge"],
+        ["doubleAttack", "envenom"],
+
+        ["improveDodge", "steal"],
+        ["steal", "hiding"],
+
+        ["envenom", "detoxify"]
+    ],
+
+    "Acolyte": [
+        ["heal", "blessing"],
+        ["heal", "increaseAgi"],
+
+        ["blessing", "angelus"],
+        ["increaseAgi", "decreaseAgi"],
+
+        ["angelus", "divineProtection"],
+        ["divineProtection", "demonBane"],
+
+        ["increaseAgi", "teleport"],
+        ["teleport", "warpPortal"],
+
+        ["ruwach", "pneuma"],
+
+        ["warpPortal", "aquaBenedicta"],
+        ["aquaBenedicta", "holyLight"]
     ]
-    // you can expand later per job
 };
+
+const skillTreeLayout = {
+    "Novice": {
+        basicSkill: { x: 50, y: 40 },
+        firstAid: { x: 30, y: 140 },
+        playDead: { x: 70, y: 140 }
+    },
+
+    "Swordsman": {
+        bash: { x: 50, y: 20 },
+
+        magnumBreak: { x: 20, y: 100 },
+        provoke: { x: 80, y: 100 },
+
+        endure: { x: 80, y: 180 },
+
+        swordMastery: { x: 30, y: 260 },
+        twoHandedMastery: { x: 70, y: 260 },
+
+        increaseHP: { x: 50, y: 340 },
+
+        // QUEST
+        berserk: { x: 20, y: 420 },
+        fatalBlow: { x: 50, y: 420 },
+        movingHP: { x: 80, y: 420 }
+    },
+
+    "Mage": {
+        fireBolt: { x: 50, y: 20 },
+
+        fireBall: { x: 20, y: 100 },
+        fireWall: { x: 80, y: 100 },
+
+        coldBolt: { x: 20, y: 180 },
+        lightningBolt: { x: 80, y: 180 },
+
+        frostDiver: { x: 20, y: 260 },
+        thunderstorm: { x: 80, y: 260 },
+
+        napalmBeat: { x: 50, y: 180 },
+        soulStrike: { x: 50, y: 260 },
+
+        safetyWall: { x: 50, y: 340 },
+        stoneCurse: { x: 30, y: 340 },
+        sight: { x: 70, y: 340 },
+
+        spRecovery: { x: 50, y: 420 },
+
+        // QUEST
+        energyCoat: { x: 50, y: 480 }
+    },
+
+    "Archer": {
+        owlsEye: { x: 50, y: 20 },
+
+        vulturesEye: { x: 50, y: 100 },
+
+        doubleStrafe: { x: 30, y: 180 },
+        arrowShower: { x: 70, y: 180 },
+
+        improveConcentration: { x: 50, y: 260 },
+
+        // QUEST
+        arrowCrafting: { x: 30, y: 340 },
+        arrowRepel: { x: 70, y: 340 }
+    },
+
+    "Merchant": {
+        discount: { x: 30, y: 20 },
+        overcharge: { x: 70, y: 20 },
+
+        vending: { x: 50, y: 100 },
+
+        enlargeWeight: { x: 20, y: 180 },
+        pushcart: { x: 50, y: 180 },
+        mammonite: { x: 80, y: 180 },
+
+        itemAppraisal: { x: 50, y: 260 },
+
+        // QUEST
+        cartRevolution: { x: 20, y: 340 },
+        changeCart: { x: 50, y: 340 },
+        crazyUproar: { x: 80, y: 340 }
+    },
+
+    "Thief": {
+        doubleAttack: { x: 50, y: 20 },
+
+        improveDodge: { x: 30, y: 100 },
+        envenom: { x: 70, y: 100 },
+
+        detoxify: { x: 70, y: 180 },
+
+        steal: { x: 30, y: 180 },
+        hiding: { x: 30, y: 260 },
+
+        // QUEST
+        backSlide: { x: 20, y: 340 },
+        findStone: { x: 40, y: 340 },
+        sandAttack: { x: 60, y: 340 },
+        stoneFling: { x: 80, y: 340 }
+    },
+
+    "Acolyte": {
+        heal: { x: 50, y: 20 },
+
+        blessing: { x: 30, y: 100 },
+        increaseAgi: { x: 70, y: 100 },
+
+        angelus: { x: 30, y: 180 },
+        decreaseAgi: { x: 70, y: 180 },
+
+        divineProtection: { x: 30, y: 260 },
+        demonBane: { x: 70, y: 260 },
+
+        signumCrusis: { x: 70, y: 340 },
+
+        ruwach: { x: 20, y: 260 },
+        pneuma: { x: 20, y: 340 },
+
+        teleport: { x: 50, y: 260 },
+        warpPortal: { x: 50, y: 340 },
+
+        aquaBenedicta: { x: 50, y: 420 },
+        cure: { x: 30, y: 420 },
+
+        // QUEST
+        holyLight: { x: 70, y: 420 }
+    }
+};
+
 function formatSkillIcon(name) {
     return name
         .toLowerCase()       // lowercase
         .replace(/\s+/g, '') // remove spaces
         .replace(/[^a-z0-9]/g, ''); // remove special characters
 }
+
+function renderSkillsForJob(job) {
+    const treeBody = document.getElementById("skillTreeBody");
+    treeBody.innerHTML = ""; // clear previous skills
+
+    const skills = jobSkills[job];
+    if (!skills) return;
+
+    Object.keys(skills).forEach(key => {
+        const skill = skills[key];
+
+        const el = document.createElement("div");
+        el.className = "skill";
+        el.dataset.name = skill.name;
+        el.dataset.desc = skill.desc;
+
+        el.innerText = skill.name;
+
+        // optional: position will be handled by your updateSkillUI function
+        treeBody.appendChild(el);
+    });
+
+    // Optional: scale down automatically if too many skills
+    const skillCount = Object.keys(skills).length;
+    treeBody.style.transform = skillCount > 15 ? "scale(0.85)" : "scale(1)";
+}
+const jobSelect = document.getElementById("job");
+jobSelect.addEventListener("change", () => {
+    renderSkillsForJob(jobSelect.value);
+    updateSkillUI(); // keep your existing positioning, colors, connections
+});
+
 function updateSkillUI() {
     const job = document.getElementById("job").value;
     const treeBody = document.getElementById("skillTreeBody");
@@ -495,97 +729,116 @@ function updateSkillUI() {
     treeBody.innerHTML = "";
 
     const skills = jobSkills[job];
+    const layout = skillTreeLayout[job];
 
+    if (!skills || !layout) return;
 
-    if (!skills || Object.keys(skills).length === 0) {
-        treeBody.innerHTML = `<p style="color:#888; grid-column:1/-1; text-align:center;">
-            No skills available for ${job}
-        </p>`;
-        return;
-    }
-
-    const normalSkills = [];
-    const questSkills = [];
-
-    // 🔹 Separate skills
-    for (let skillName in skills) {
+    Object.keys(skills).forEach(skillName => {
         if (!(skillName in playerSkills)) playerSkills[skillName] = 0;
 
         const skill = skills[skillName];
+        const pos = layout[skillName];
 
-        if (skill.type === "quest") {
-            questSkills.push([skillName, skill]);
-        } else {
-            normalSkills.push([skillName, skill]);
-        }
-    }
+        if (!pos) return; // skip if no layout
 
-    // 🔹 Skill element creator (reuse logic)
-    function createSkillElement(skillName, skill) {
         const el = document.createElement("div");
         el.className = "skill";
         el.dataset.skill = skillName;
+        el.dataset.name = skill.name;
+        el.dataset.desc = skill.desc;
 
         el.innerHTML = `
-    <img src="skills/${formatSkillIcon(skillName)}.png" onerror="this.src='skills/default.png'">
-    <div class="skill-name">${skill.name}</div>
-    <span class="skill-level">${playerSkills[skillName]}/${skill.maxLevel}</span>
-`;
+            <img src="skills/${formatSkillIcon(skill.name)}.png"
+                 onerror="this.src='skills/default.png'">
+            <span class="lvl">${playerSkills[skillName]}</span>
+        `;
+
+        // 📍 TREE POSITIONING
+        el.style.left = pos.x + "%";
+        el.style.top = pos.y + "px";
+        el.style.transform = "translateX(-50%)";
 
         const state = getSkillState(skillName);
         el.classList.add(state);
 
-        el.addEventListener("click", () => {
-            upgradeSkill(skillName);
-        });
+        el.onclick = () => upgradeSkill(skillName);
 
-        return el;
-    }
-
-    // 🔹 Render NORMAL skills
-    normalSkills.forEach(([skillName, skill]) => {
-        treeBody.appendChild(createSkillElement(skillName, skill));
-    });
-
-    // 🔹 QUEST SKILLS HEADER
-    if (questSkills.length > 0) {
-        const header = document.createElement("div");
-        header.innerText = "QUEST SKILLS";
-        header.style.gridColumn = "1 / -1"; // ✅ full width always
-        header.style.textAlign = "center";
-        header.style.color = "gold";
-        header.style.marginTop = "10px";
-
-        treeBody.appendChild(header);
-    }
-
-    // 🔹 Render QUEST skills
-    questSkills.forEach(([skillName, skill]) => {
-        treeBody.appendChild(createSkillElement(skillName, skill));
+        treeBody.appendChild(el);
+        
     });
 
     document.getElementById("skillPoints").innerText = `Skill Points: ${skillPoints}`;
+
     setTimeout(drawSkillConnections, 50);
 
+    const container = document.getElementById("skillTreeBody");
     const skillCount = Object.keys(skills).length;
-const container = document.getElementById("skillTreeBody");
 
-if (skillCount > 12) {
-    container.style.transformOrigin = "top center"; // keeps alignment nice
-} else {
-    container.style.transform = "scale(1)";
+    if (skillCount > 15) {
+        container.style.transform = "scale(0.85)";
+    } else {
+        container.style.transform = "scale(1)";
+    }
+
+
+    // ✅ BIND TOOLTIP AFTER ALL SKILL ELEMENTS EXIST
+    bindSkillTooltips();
 }
+
+// ===============================
+// SKILL TOOLTIPS
+// ===============================
+
+function bindSkillTooltips() {
+    const skills = document.querySelectorAll('.skill');
+    
+    skills.forEach(skillEl => {
+        const skillName = skillEl.dataset.skill;
+        const skill = jobSkills[document.getElementById("job").value][skillName];
+        if (!skill) return;
+
+        // Remove any existing tooltip
+        let tooltip = skillEl.querySelector('.skill-tooltip');
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.className = 'skill-tooltip';
+            skillEl.appendChild(tooltip);
+        }
+
+        tooltip.innerHTML = `
+            <strong>${skill.name}</strong><br>
+            <em>Max Level: ${skill.maxLevel}</em><br>
+            ${skill.desc}
+        `;
+
+        // Show/Hide on hover
+        skillEl.onmouseenter = () => {
+            tooltip.style.opacity = 1;
+            tooltip.style.transform = 'scale(1)';
+        };
+        skillEl.onmouseleave = () => {
+            tooltip.style.opacity = 0;
+            tooltip.style.transform = 'scale(0.8)';
+        };
+    });
 }
+
 function drawSkillConnections() {
     const job = document.getElementById("job").value;
     const layer = document.getElementById("skillConnections");
 
     if (!layer) return;
-
     layer.innerHTML = "";
 
     const connections = skillConnections[job];
     if (!connections) return;
+
+    const treeBody = document.getElementById("skillTreeBody");
+    const parentRect = treeBody.getBoundingClientRect();
+
+    const scale = treeBody.style.transform
+        ? parseFloat(treeBody.style.transform.replace("scale(", "").replace(")", ""))
+        : 1;
 
     connections.forEach(([from, to]) => {
         const fromEl = document.querySelector(`[data-skill="${from}"]`);
@@ -595,13 +848,12 @@ function drawSkillConnections() {
 
         const fromRect = fromEl.getBoundingClientRect();
         const toRect = toEl.getBoundingClientRect();
-        const treeBody = document.getElementById("skillTreeBody");
-const parentRect = treeBody.getBoundingClientRect(); // 🔥 FIX
 
-        const x1 = fromRect.left + fromRect.width / 2 - parentRect.left;
-        const y1 = fromRect.top + fromRect.height / 2 - parentRect.top;
-        const x2 = toRect.left + toRect.width / 2 - parentRect.left;
-        const y2 = toRect.top + toRect.height / 2 - parentRect.top;
+        // 🔥 compensate for scaling
+        const x1 = (fromRect.left + fromRect.width / 2 - parentRect.left) / scale;
+        const y1 = (fromRect.top + fromRect.height / 2 - parentRect.top) / scale;
+        const x2 = (toRect.left + toRect.width / 2 - parentRect.left) / scale;
+        const y2 = (toRect.top + toRect.height / 2 - parentRect.top) / scale;
 
         const length = Math.hypot(x2 - x1, y2 - y1);
         const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
@@ -642,3 +894,29 @@ function upgradeSkill(skillName) {
         updateSkillUI();
     }
 }
+// ===============================
+// SKILL TOOLTIP
+// ===============================
+window.addEventListener('DOMContentLoaded', () => {
+    const tooltip = document.getElementById('tooltip');
+    
+    function attachTooltipEvents() {
+        document.querySelectorAll('.skill').forEach(skill => {
+            skill.addEventListener('mousemove', e => {
+                tooltip.style.display = 'block';
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY + 10 + 'px';
+                tooltip.innerHTML = `<b>${skill.dataset.name}</b><br>${skill.dataset.desc}`;
+            });
+    
+            skill.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    }
+
+    // Call once for existing skills
+    attachTooltipEvents();
+
+    // Optional: if updateSkillUI recreates skill elements, call attachTooltipEvents() at the end of that function
+});
