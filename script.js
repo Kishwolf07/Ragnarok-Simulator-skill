@@ -525,9 +525,10 @@ function updateSkillUI() {
         el.dataset.skill = skillName;
 
         el.innerHTML = `
-            <img src="skills/${formatSkillIcon(skillName)}.png" onerror="this.src='skills/default.png'">
-            <span class="skill-level">${playerSkills[skillName]}/${skill.maxLevel}</span>
-        `;
+    <img src="skills/${formatSkillIcon(skillName)}.png" onerror="this.src='skills/default.png'">
+    <div class="skill-name">${skill.name}</div>
+    <span class="skill-level">${playerSkills[skillName]}/${skill.maxLevel}</span>
+`;
 
         const state = getSkillState(skillName);
         el.classList.add(state);
@@ -548,7 +549,7 @@ function updateSkillUI() {
     if (questSkills.length > 0) {
         const header = document.createElement("div");
         header.innerText = "QUEST SKILLS";
-        header.style.gridColumn = "span 5";
+        header.style.gridColumn = "1 / -1"; // ✅ full width always
         header.style.textAlign = "center";
         header.style.color = "gold";
         header.style.marginTop = "10px";
@@ -563,6 +564,15 @@ function updateSkillUI() {
 
     document.getElementById("skillPoints").innerText = `Skill Points: ${skillPoints}`;
     setTimeout(drawSkillConnections, 50);
+
+    const skillCount = Object.keys(skills).length;
+const container = document.getElementById("skillTreeBody");
+
+if (skillCount > 12) {
+    container.style.transformOrigin = "top center"; // keeps alignment nice
+} else {
+    container.style.transform = "scale(1)";
+}
 }
 function drawSkillConnections() {
     const job = document.getElementById("job").value;
@@ -583,7 +593,7 @@ function drawSkillConnections() {
 
         const fromRect = fromEl.getBoundingClientRect();
         const toRect = toEl.getBoundingClientRect();
-        const parentRect = layer.getBoundingClientRect();
+        const parentRect = treeBody.getBoundingClientRect(); // 🔥 FIX
 
         const x1 = fromRect.left + fromRect.width / 2 - parentRect.left;
         const y1 = fromRect.top + fromRect.height / 2 - parentRect.top;
