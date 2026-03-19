@@ -212,6 +212,10 @@ function updateWeaponOptions() {
 // ===============================
 
 function updateStats(changedStatId) {
+
+    let jobLevel = parseInt(document.getElementById("jobLevel").value) || 1;
+    let job = document.getElementById("job").value;
+
     // ===============================
     // HANDLE JOB CHANGE (RESET SKILLS)
     // ===============================
@@ -242,8 +246,6 @@ function updateStats(changedStatId) {
     if (level > 99) { level = 99; baseLevelInput.value = 99; }
     else if (level < 1) { level = 1; baseLevelInput.value = 1; }
 
-    let jobLevel = parseInt(document.getElementById("jobLevel").value) || 1;
-    let job = document.getElementById("job").value;
     let weapon = document.getElementById("weapon").value;
     let jobInfo = jobData[job] || jobData["Novice"];
 
@@ -593,7 +595,8 @@ function drawSkillConnections() {
 
         const fromRect = fromEl.getBoundingClientRect();
         const toRect = toEl.getBoundingClientRect();
-        const parentRect = treeBody.getBoundingClientRect(); // 🔥 FIX
+        const treeBody = document.getElementById("skillTreeBody");
+const parentRect = treeBody.getBoundingClientRect(); // 🔥 FIX
 
         const x1 = fromRect.left + fromRect.width / 2 - parentRect.left;
         const y1 = fromRect.top + fromRect.height / 2 - parentRect.top;
@@ -635,5 +638,7 @@ function upgradeSkill(skillName) {
     playerSkills[skillName]++;
     skillPoints--;
 
-    updateSkillUI();
+    if (document.getElementById('skillsPanel').classList.contains('active')) {
+        updateSkillUI();
+    }
 }
