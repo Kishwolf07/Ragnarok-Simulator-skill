@@ -473,214 +473,199 @@ const jobSkills = {
 };
 // SKILL CONNECTIONS (ARROWS)
 const skillConnections = {
+
     "Novice": [
         ["basicSkill", "firstAid"],
         ["basicSkill", "playDead"]
     ],
 
     "Swordsman": [
+        ["swordMastery", "twoHandedMastery"],
+
         ["bash", "magnumBreak"],
-        ["bash", "provoke"],
-        ["provoke", "endure"],
-        ["endure", "twoHandedMastery"],
-        ["bash", "swordMastery"],
-        ["swordMastery", "increaseHP"]
+
+        ["provoke", "endure"]
+        // increaseHP → NO CONNECTION
     ],
 
     "Mage": [
-        ["fireBolt", "fireBall"],
-        ["fireBolt", "fireWall"],
-
-        ["fireBall", "napalmBeat"],
         ["napalmBeat", "soulStrike"],
+        ["napalmBeat", "safetyWall"],
 
-        ["fireWall", "safetyWall"],
+        ["sight", "fireWall"],
+
+        ["fireBolt", "fireBall"],
+        ["fireBall", "fireWall"],
 
         ["coldBolt", "frostDiver"],
-        ["lightningBolt", "thunderstorm"],
+        ["lightningBolt", "thunderstorm"]
 
-        ["soulStrike", "stoneCurse"],
-        ["stoneCurse", "spRecovery"],
-
-        ["safetyWall", "energyCoat"]
+        // spRecovery → NO CONNECTION
+        // stoneCurse → NO CONNECTION
     ],
 
     "Archer": [
         ["owlsEye", "vulturesEye"],
-        ["vulturesEye", "doubleStrafe"],
-        ["vulturesEye", "arrowShower"],
-        ["doubleStrafe", "improveConcentration"],
-        ["arrowShower", "improveConcentration"]
+        ["vulturesEye", "improveConcentration"],
+
+        ["doubleStrafe", "arrowShower"]
     ],
 
     "Merchant": [
-        ["discount", "overcharge"],
-        ["overcharge", "vending"],
-
-        ["discount", "enlargeWeight"],
+        ["enlargeWeight", "discount"],
         ["enlargeWeight", "pushcart"],
-        ["pushcart", "mammonite"],
 
-        ["pushcart", "itemAppraisal"]
+        ["discount", "overcharge"],
+
+        ["pushcart", "vending"]
+
+        // mammonite → NO CONNECTION
+        // itemAppraisal → NO CONNECTION
     ],
 
     "Thief": [
-        ["doubleAttack", "improveDodge"],
-        ["doubleAttack", "envenom"],
-
-        ["improveDodge", "steal"],
         ["steal", "hiding"],
-
         ["envenom", "detoxify"]
+
+        // doubleAttack → NO CONNECTION
+        // improveDodge → NO CONNECTION
     ],
 
     "Acolyte": [
-        ["heal", "blessing"],
+        ["divineProtection", "demonBane"],
+        ["divineProtection", "angelus"],
+        ["divineProtection", "safetyWall"],
+
+        ["demonBane", "signumCrusis"],
+
+        ["heal", "cure"],
         ["heal", "increaseAgi"],
 
-        ["blessing", "angelus"],
         ["increaseAgi", "decreaseAgi"],
 
-        ["angelus", "divineProtection"],
-        ["divineProtection", "demonBane"],
-
-        ["increaseAgi", "teleport"],
+        ["ruwach", "teleport"],
         ["teleport", "warpPortal"],
+        ["warpPortal", "pneuma"]
 
-        ["ruwach", "pneuma"],
-
-        ["warpPortal", "aquaBenedicta"],
-        ["aquaBenedicta", "holyLight"]
+        // aquaBenedicta → NO CONNECTION
     ]
 };
 
 const skillTreeLayout = {
+
     "Novice": {
-        basicSkill: { x: 50, y: 40 },
-        firstAid: { x: 30, y: 140 },
-        playDead: { x: 70, y: 140 }
+        basicSkill: { x: 50, y: 20 },
+        firstAid:   { x: 35, y: 80 },
+        playDead:   { x: 65, y: 80 }
     },
 
     "Swordsman": {
-        bash: { x: 50, y: 20 },
+        swordMastery: { x: 50, y: 20 },
+        twoHandedMastery: { x: 50, y: 80 },
 
-        magnumBreak: { x: 20, y: 100 },
-        provoke: { x: 80, y: 100 },
+        bash: { x: 30, y: 20 },
+        magnumBreak: { x: 30, y: 80 },
 
-        endure: { x: 80, y: 180 },
+        provoke: { x: 70, y: 20 },
+        endure:  { x: 70, y: 80 },
 
-        swordMastery: { x: 30, y: 260 },
-        twoHandedMastery: { x: 70, y: 260 },
+        increaseHP: { x: 50, y: 140 },
 
-        increaseHP: { x: 50, y: 340 },
-
-        // QUEST
-        berserk: { x: 20, y: 420 },
-        fatalBlow: { x: 50, y: 420 },
-        movingHP: { x: 80, y: 420 }
+        berserk:   { x: 30, y: 200 },
+        fatalBlow: { x: 50, y: 200 },
+        movingHP:  { x: 70, y: 200 }
     },
 
     "Mage": {
         fireBolt: { x: 50, y: 20 },
+        fireBall: { x: 50, y: 80 },
+        fireWall: { x: 50, y: 140 },
 
-        fireBall: { x: 20, y: 100 },
-        fireWall: { x: 80, y: 100 },
+        sight: { x: 30, y: 140 },
 
-        coldBolt: { x: 20, y: 180 },
-        lightningBolt: { x: 80, y: 180 },
+        coldBolt:   { x: 30, y: 20 },
+        frostDiver: { x: 30, y: 80 },
 
-        frostDiver: { x: 20, y: 260 },
-        thunderstorm: { x: 80, y: 260 },
+        lightningBolt: { x: 70, y: 20 },
+        thunderstorm:  { x: 70, y: 80 },
 
-        napalmBeat: { x: 50, y: 180 },
-        soulStrike: { x: 50, y: 260 },
+        napalmBeat: { x: 50, y: 200 },
+        soulStrike: { x: 40, y: 260 },
+        safetyWall: { x: 60, y: 260 },
 
-        safetyWall: { x: 50, y: 340 },
-        stoneCurse: { x: 30, y: 340 },
-        sight: { x: 70, y: 340 },
+        stoneCurse: { x: 30, y: 260 },
+        spRecovery: { x: 50, y: 320 },
 
-        spRecovery: { x: 50, y: 420 },
-
-        // QUEST
-        energyCoat: { x: 50, y: 480 }
+        energyCoat: { x: 50, y: 380 }
     },
 
     "Archer": {
         owlsEye: { x: 50, y: 20 },
+        vulturesEye: { x: 50, y: 80 },
+        improveConcentration: { x: 50, y: 140 },
 
-        vulturesEye: { x: 50, y: 100 },
+        doubleStrafe: { x: 35, y: 200 },
+        arrowShower:  { x: 65, y: 200 },
 
-        doubleStrafe: { x: 30, y: 180 },
-        arrowShower: { x: 70, y: 180 },
-
-        improveConcentration: { x: 50, y: 260 },
-
-        // QUEST
-        arrowCrafting: { x: 30, y: 340 },
-        arrowRepel: { x: 70, y: 340 }
+        arrowCrafting: { x: 35, y: 260 },
+        arrowRepel:    { x: 65, y: 260 }
     },
 
     "Merchant": {
-        discount: { x: 30, y: 20 },
-        overcharge: { x: 70, y: 20 },
+        enlargeWeight: { x: 50, y: 20 },
 
-        vending: { x: 50, y: 100 },
+        discount: { x: 30, y: 70 },
+        pushcart: { x: 70, y: 70 },
 
-        enlargeWeight: { x: 20, y: 180 },
-        pushcart: { x: 50, y: 180 },
-        mammonite: { x: 80, y: 180 },
+        overcharge: { x: 30, y: 130 },
+        vending:    { x: 70, y: 130 },
 
-        itemAppraisal: { x: 50, y: 260 },
+        mammonite:     { x: 30, y: 190 },
+        itemAppraisal: { x: 70, y: 190 },
 
-        // QUEST
-        cartRevolution: { x: 20, y: 340 },
-        changeCart: { x: 50, y: 340 },
-        crazyUproar: { x: 80, y: 340 }
+        cartRevolution: { x: 30, y: 250 },
+        changeCart:     { x: 50, y: 250 },
+        crazyUproar:    { x: 70, y: 250 }
     },
 
     "Thief": {
-        doubleAttack: { x: 50, y: 20 },
+        steal: { x: 50, y: 20 },
+        hiding: { x: 50, y: 80 },
 
-        improveDodge: { x: 30, y: 100 },
-        envenom: { x: 70, y: 100 },
+        envenom: { x: 30, y: 20 },
+        detoxify:{ x: 30, y: 80 },
 
-        detoxify: { x: 70, y: 180 },
+        doubleAttack: { x: 70, y: 20 },
+        improveDodge: { x: 70, y: 80 },
 
-        steal: { x: 30, y: 180 },
-        hiding: { x: 30, y: 260 },
-
-        // QUEST
-        backSlide: { x: 20, y: 340 },
-        findStone: { x: 40, y: 340 },
-        sandAttack: { x: 60, y: 340 },
-        stoneFling: { x: 80, y: 340 }
+        backSlide:  { x: 20, y: 140 },
+        findStone:  { x: 40, y: 140 },
+        sandAttack: { x: 60, y: 140 },
+        stoneFling: { x: 80, y: 140 }
     },
 
     "Acolyte": {
         heal: { x: 50, y: 20 },
 
-        blessing: { x: 30, y: 100 },
-        increaseAgi: { x: 70, y: 100 },
+        cure:        { x: 30, y: 70 },
+        increaseAgi: { x: 70, y: 70 },
 
-        angelus: { x: 30, y: 180 },
-        decreaseAgi: { x: 70, y: 180 },
+        decreaseAgi: { x: 70, y: 130 },
 
-        divineProtection: { x: 30, y: 260 },
-        demonBane: { x: 70, y: 260 },
+        divineProtection: { x: 50, y: 130 },
 
-        signumCrusis: { x: 70, y: 340 },
+        angelus:   { x: 30, y: 130 },
+        demonBane: { x: 70, y: 190 },
 
-        ruwach: { x: 20, y: 260 },
-        pneuma: { x: 20, y: 340 },
+        signumCrusis: { x: 70, y: 250 },
 
-        teleport: { x: 50, y: 260 },
-        warpPortal: { x: 50, y: 340 },
+        ruwach: { x: 30, y: 190 },
+        teleport: { x: 30, y: 250 },
+        warpPortal: { x: 30, y: 310 },
+        pneuma: { x: 30, y: 370 },
 
-        aquaBenedicta: { x: 50, y: 420 },
-        cure: { x: 30, y: 420 },
-
-        // QUEST
-        holyLight: { x: 70, y: 420 }
+        aquaBenedicta: { x: 70, y: 310 },
+        holyLight:     { x: 70, y: 370 }
     }
 };
 
@@ -790,19 +775,21 @@ function updateSkillUI() {
 // ===============================
 
 function bindSkillTooltips() {
-    const skills = document.querySelectorAll('.skill');
+    // 🔥 prevent multiple tooltips
+    let tooltip = document.querySelector('.skill-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'skill-tooltip';
+        document.body.appendChild(tooltip);
+    }
 
-    // Create a single tooltip element appended to body
-    let tooltip = document.createElement('div');
-    tooltip.className = 'skill-tooltip';
-    document.body.appendChild(tooltip);
+    const skills = document.querySelectorAll('.skill');
 
     skills.forEach(skillEl => {
         const skillName = skillEl.dataset.skill;
         const skill = jobSkills[document.getElementById("job").value][skillName];
         if (!skill) return;
 
-        // Hover: show tooltip
         skillEl.onmouseenter = () => {
             tooltip.innerHTML = `
                 <strong>${skill.name}</strong><br>
@@ -812,17 +799,19 @@ function bindSkillTooltips() {
             tooltip.classList.add('show');
         };
 
-        // Hover out: hide tooltip
         skillEl.onmouseleave = () => {
             tooltip.classList.remove('show');
         };
 
-        // Move tooltip near mouse
         skillEl.onmousemove = (e) => {
-            const offsetX = 14; // distance from mouse pointer
-            const offsetY = -16;
-            tooltip.style.left = e.clientX + offsetX + 'px';
-            tooltip.style.top = e.clientY + offsetY + 'px';
+            tooltip.style.left = e.clientX + 14 + 'px';
+            tooltip.style.top = e.clientY - 16 + 'px';
+        };
+
+        // 🔥 force hide on click (important)
+        skillEl.onclick = () => {
+            tooltip.classList.remove('show');
+            upgradeSkill(skillName);
         };
     });
 }
@@ -898,29 +887,3 @@ function upgradeSkill(skillName) {
         updateSkillUI();
     }
 }
-// ===============================
-// SKILL TOOLTIP
-// ===============================
-window.addEventListener('DOMContentLoaded', () => {
-    const tooltip = document.getElementById('tooltip');
-    
-    function attachTooltipEvents() {
-        document.querySelectorAll('.skill').forEach(skill => {
-            skill.addEventListener('mousemove', e => {
-                tooltip.style.display = 'block';
-                tooltip.style.left = e.pageX + 10 + 'px';
-                tooltip.style.top = e.pageY + 10 + 'px';
-                tooltip.innerHTML = `<b>${skill.dataset.name}</b><br>${skill.dataset.desc}`;
-            });
-    
-            skill.addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
-            });
-        });
-    }
-
-    // Call once for existing skills
-    attachTooltipEvents();
-
-    // Optional: if updateSkillUI recreates skill elements, call attachTooltipEvents() at the end of that function
-});
