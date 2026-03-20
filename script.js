@@ -844,7 +844,7 @@ function updateSkillUI() {
         treeBody.appendChild(el);
     });
 
-    document.getElementById("skillPoints").innerText = `Skill Points: ${skillPoints}`;
+    document.querySelector("#skillPoints .sp-value").innerText = skillPoints;
 
     setTimeout(drawSkillConnections, 50);
 

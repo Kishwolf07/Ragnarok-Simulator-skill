@@ -410,7 +410,7 @@ input[type=number]:focus {
     padding: 6px;
 }
 
-/* --- Layout Containers --- */
+/* --- LAYOUT CONTAINERS --- */
 .main-layout {
     display: flex;
     gap: 20px;
@@ -478,7 +478,7 @@ input[type=number] {
     color: #00bfff;
 }
 
-/* --- 8. Switch & Miscellaneous --- */
+/* --- GENDER SWITCHING --- */
 .gender-switch {
     display: flex;
     align-items: center;
@@ -545,6 +545,7 @@ input:checked + .slider:before {
     transform: translateX(30px);
 }
 
+/* STAT ICONS */
 .stat-icon {
     width: 20px;
     height: 20px;
@@ -553,6 +554,7 @@ input:checked + .slider:before {
     object-fit: contain;
 }
 
+/* STATUS DESIGN */
 .status-columns {
     display: flex;
     gap: 10px;
@@ -599,6 +601,8 @@ input:checked + .slider:before {
         flex-direction: column;
     }
 }
+
+/* SKILL BOXES */
 .skill-box {
     display: flex;
     flex-direction: column;
@@ -636,6 +640,7 @@ input:checked + .slider:before {
     border-radius: 4px;
 }
 
+/* SKILL TOOLTIP */
 .skill {
     position: absolute;
     cursor: pointer;
@@ -680,6 +685,8 @@ input:checked + .slider:before {
     margin-bottom: 6px;
     color: #0af;
 }
+
+/* QUEST SKILL COLOR */
 .skill.quest-skill {
     border-color: #ff69b4;
     box-shadow: 0 0 10px rgba(255,105,180,0.6);
@@ -695,4 +702,70 @@ input:checked + .slider:before {
     font-size: 9px;
     padding: 2px 5px;
     border-radius: 6px;
+}
+
+/* SKILL POINTS BADGE */
+.skill-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.skill-points-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #0a1f44, #102c66);
+    border: 1px solid #00bfff;
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+    font-size: 13px;
+    font-weight: bold;
+    color: #cceeff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glow pulse */
+@keyframes spGlow {
+    0% { box-shadow: 0 0 8px rgba(0,191,255,0.3); }
+    50% { box-shadow: 0 0 16px rgba(0,191,255,0.8); }
+    100% { box-shadow: 0 0 8px rgba(0,191,255,0.3); }
+}
+
+.skill-points-badge {
+    animation: spGlow 2.5s infinite ease-in-out;
+}
+
+/* Label */
+.skill-points-badge .sp-label {
+    color: #88ccff;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* Value (main focus) */
+.skill-points-badge .sp-value {
+    font-size: 16px;
+    color: #ffd96a;
+    text-shadow: 0 0 6px rgba(255, 217, 106, 0.8);
+}
+
+/* Shine effect */
+.skill-points-badge::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: spShine 3s infinite;
+}
+
+@keyframes spShine {
+    0% { left: -100%; }
+    100% { left: 200%; }
 }
