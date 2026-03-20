@@ -196,26 +196,27 @@
                         <div class="skill-header-info">
                             <h4>Skill Tree</h4>
                             <div id="skillPoints" class="skill-points-badge">
-    <span class="sp-label">Skill Points</span>
-    <span class="sp-value">0</span>
-</div>
-                        </div>
-                        <!-- Skill Tree Wrapper -->
-        <div id="skillTreeWrapper" style="position:relative;">
-            <div id="skillTreeBody" class="skill-tree-grid">
+            <span class="sp-label">Skill Points</span>
+            <span class="sp-value">0</span>
+        </div>
             </div>
-            <div id="skillConnections"></div>
+                                <!-- Skill Tree Wrapper -->
+                <div id="skillTreeWrapper" style="position:relative;">
+                    <div id="skillTreeBody" class="skill-tree-grid">
+                    </div>
+                    <div id="skillConnections"></div>
+                </div>
+
+                <!-- Tooltip for skill hover -->
+                <div id="tooltip" style="position:absolute; display:none; background:#222; color:#fff; padding:5px; border-radius:4px; pointer-events:none; z-index:1000;"></div>
+
+                    </div> 
+                </div> 
+            </div>
         </div>
 
-        <!-- Tooltip for skill hover -->
-        <div id="tooltip" style="position:absolute; display:none; background:#222; color:#fff; padding:5px; border-radius:4px; pointer-events:none; z-index:1000;"></div>
-
-            </div> 
-        </div> 
-    </div>
-</div>
-
 <script src="script.js"></script>
+<script src="skills.js"></script>
 <script>
     window.onload = function() {
         // Initialize Data
