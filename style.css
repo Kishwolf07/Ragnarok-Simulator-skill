@@ -120,21 +120,22 @@ body::after {
 .arrow-line {
     position: absolute;
     height: 2px;
-    background: linear-gradient(to right, #aaa, #fff);
-    opacity: 0.8;
+    background: linear-gradient(90deg, rgba(0,170,255,0.2), rgba(0,170,255,0.8));
+    opacity: 0.9;
     transform-origin: left center;
     z-index: 0;
+    border-radius: 2px;
+    filter: blur(0.3px);
 }
 
-/* ARROW HEAD */
+/* subtle glow */
 .arrow-line::after {
     content: "";
     position: absolute;
-    right: -6px;
-    top: -4px;
-    border-left: 8px solid #aaa;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
+    inset: 0;
+    background: inherit;
+    filter: blur(4px);
+    opacity: 0.5;
 }
 
 #skillTreeWrapper {
@@ -151,7 +152,7 @@ body::after {
     width: 100%;
     height: 100%;
     
-    transform: scale(0.70);  /* zoom out so all skills fit */
+    transform: scale(0.85);  /* zoom out so all skills fit */
     transform-origin: top center;
 }
 
@@ -166,25 +167,30 @@ body::after {
 
 .skill {
     position: absolute;
-    width: 48px;   /* was 60px */
-    height: 48px;  /* was 60px */
-    background: #1a1a1a;
-    border: 2px solid #555;
-    border-radius: 10px;
-    text-align: center;
+    width: 52px;
+    height: 52px;
+    background: rgba(20, 30, 60, 0.9);
+    border: 2px solid rgba(255, 217, 106, 0.6);
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.25s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    backdrop-filter: blur(6px);
 }
 
 .skill:hover {
-    transform: translateX(-50%) scale(1.1);  /* smaller zoom to prevent overflow */
-    z-index: 5;
+    transform: translateX(-50%) scale(1.15);
+    box-shadow: 0 0 12px #0af, 0 0 20px rgba(0,170,255,0.5);
 }
 
 .skill img {
-    width: 28px;  /* was 36px */
+    width: 28px;
     height: 28px;
-    margin-top: 2px;
+    transform: translateY(2px); /* small visual correction */
 }
 
 .skill-name {
@@ -215,7 +221,8 @@ body::after {
 }
 
 .skill.locked {
-    opacity: 0.3;
+    opacity: 0.25;
+    filter: grayscale(80%);
 }
 
 /* ---Main Panel & Glass-morphism --- */
@@ -608,9 +615,9 @@ input:checked + .slider:before {
 }
 
 .skill-box img {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 4px;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 2px;
 }
 
 .skill-label {
@@ -672,4 +679,20 @@ input:checked + .slider:before {
     font-size: 12px;
     margin-bottom: 6px;
     color: #0af;
+}
+.skill.quest-skill {
+    border-color: #ff69b4;
+    box-shadow: 0 0 10px rgba(255,105,180,0.6);
+}
+
+.skill.quest-skill::before {
+    content: "Q";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff69b4;
+    color: white;
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: 6px;
 }

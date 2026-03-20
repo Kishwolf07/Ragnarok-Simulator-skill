@@ -377,8 +377,8 @@ const jobSkills = {
     "Novice": {
         basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal", desc: "A simple beginner skill." },
 
-        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Recover small HP instantly." },
-        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to be dead to avoid attacks." }
+        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Recover small HP instantly.", quest: true },
+        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to be dead to avoid attacks.", quest: true}
     },
 
     "Swordsman": {
@@ -390,9 +390,9 @@ const jobSkills = {
         swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage with swords." },
         twoHandedMastery: { name: "Two-Handed Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage when using two-handed swords." },
 
-        berserk: { name: "Berserk", maxLevel: 1, type: "quest", desc: "Boost attack power at the cost of defense." },
-        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest", desc: "One powerful strike to finish enemies." },
-        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest", desc: "Allows HP regeneration even while moving." }
+        berserk: { name: "Berserk", maxLevel: 1, type: "quest", desc: "Boost attack power at the cost of defense.", quest: true },
+        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest", desc: "One powerful strike to finish enemies.", quest: true },
+        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest", desc: "Allows HP regeneration even while moving.", quest: true }
     },
 
     "Mage": {
@@ -410,7 +410,7 @@ const jobSkills = {
         stoneCurse: { name: "Stone Curse", maxLevel: 10, type: "normal", desc: "Petrify a single enemy temporarily." },
         thunderstorm: { name: "Thunderstorm", maxLevel: 10, type: "normal", desc: "Electric AoE damage to enemies." },
 
-        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest", desc: "Boost defense by covering body in magic." }
+        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest", desc: "Boost defense by covering body in magic.", quest: true }
     },
 
     "Archer": {
@@ -420,8 +420,8 @@ const jobSkills = {
         owlsEye: { name: "Owl's Eye", maxLevel: 10, type: "normal", desc: "Increase ranged attack range and accuracy." },
         vulturesEye: { name: "Vulture's Eye", maxLevel: 10, type: "normal", desc: "Further increase accuracy and critical hit chance." },
 
-        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest", desc: "Create custom arrows." },
-        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest", desc: "Shoot arrows that knock back enemies." }
+        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest", desc: "Create custom arrows.", quest: true },
+        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest", desc: "Shoot arrows that knock back enemies.", quest: true }
     },
 
     "Merchant": {
@@ -433,9 +433,9 @@ const jobSkills = {
         pushcart: { name: "Pushcart", maxLevel: 10, type: "normal", desc: "Move your cart faster." },
         vending: { name: "Vending", maxLevel: 10, type: "normal", desc: "Sell items automatically using vending machine." },
 
-        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest", desc: "Spin your cart to damage nearby enemies." },
-        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest", desc: "Switch to a different cart style." },
-        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest", desc: "Confuse enemies around you." }
+        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest", desc: "Spin your cart to damage nearby enemies.", quest: true },
+        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest", desc: "Switch to a different cart style.", quest: true },
+        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest", desc: "Confuse enemies around you.", quest: true }
     },
 
     "Thief": {
@@ -446,10 +446,10 @@ const jobSkills = {
         improveDodge: { name: "Improve Dodge", maxLevel: 10, type: "normal", desc: "Increase chance to dodge attacks." },
         steal: { name: "Steal", maxLevel: 10, type: "normal", desc: "Steal items from enemies." },
 
-        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest", desc: "Quickly move behind the enemy." },
-        findStone: { name: "Find Stone", maxLevel: 1, type: "quest", desc: "Locate rare stones or items." },
-        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest", desc: "Blind enemies temporarily." },
-        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw stones to damage or interrupt enemies." }
+        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest", desc: "Quickly move behind the enemy.", quest: true },
+        findStone: { name: "Find Stone", maxLevel: 1, type: "quest", desc: "Locate rare stones or items.", quest: true },
+        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest", desc: "Blind enemies temporarily.", quest: true },
+        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw stones to damage or interrupt enemies.", quest: true }
     },
 
     "Acolyte": {
@@ -468,7 +468,7 @@ const jobSkills = {
         teleport: { name: "Teleport", maxLevel: 2, type: "normal", desc: "Instantly move to a known location." },
         warpPortal: { name: "Warp Portal", maxLevel: 4, type: "normal", desc: "Create a portal for party members to teleport." },
 
-        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest", desc: "Attack undead enemies with holy magic." }
+        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest", desc: "Attack undead enemies with holy magic.", quest: true }
     }
 };
 // SKILL CONNECTIONS (ARROWS)
@@ -669,6 +669,91 @@ const skillTreeLayout = {
     }
 };
 
+const skillTypes = {
+    "Novice": {
+        basicSkill: "Passive",
+        firstAid: "Supportive",
+        playDead: "Supportive"
+    },
+    "Swordsman": {
+        swordMastery: "Passive",
+        twoHandedMastery: "Passive",
+        bash: "Offensive",
+        magnumBreak: "Offensive",
+        provoke: "Active",
+        endure: "Active",
+        increaseHP: "Passive",
+        berserk: "Passive",
+        fatalBlow: "Passive",
+        movingHP: "Passive"
+    },
+    "Mage": {
+        fireBolt: "Offensive",
+        fireBall: "Offensive",
+        fireWall: "Offensive",
+        sight: "Active",
+        coldBolt: "Offensive",
+        frostDiver: "Offensive",
+        lightningBolt: "Offensive",
+        thunderstorm: "Offensive",
+        napalmBeat: "Offensive",
+        soulStrike: "Offensive",
+        safetyWall: "Supportive",
+        stoneCurse: "Active",
+        spRecovery: "Passive",
+        energyCoat: "Supportive"
+    },
+    "Archer": {
+        owlsEye: "Passive",
+        vulturesEye: "Passive",
+        improveConcentration: "Suppotive",
+        doubleStrafe: "Offensive",
+        arrowShower: "Offensive",
+        arrowCrafting: "Active",
+        arrowRepel: "Offensive"
+    },
+    "Merchant": {
+        enlargeWeight: "Passive",
+        discount: "Passive",
+        pushcart: "Passive",
+        overcharge: "Passive",
+        vending: "Active",
+        mammonite: "Offensive",
+        itemAppraisal: "Active",
+        cartRevolution: "Offensive",
+        changeCart: "Active",
+        crazyUproar: "Supportive"
+    },
+    "Thief": {
+        steal: "Active",
+        hiding: "Active",
+        envenom: "Offensive",
+        detoxify: "Supportive",
+        doubleAttack: "Passive",
+        improveDodge: "Passive",
+        backSlide: "Active",
+        findStone: "Active",
+        sandAttack: "Offensive",
+        stoneFling: "Offensive"
+    },
+    "Acolyte": {
+        heal: "Supportive",
+        cure: "Supportive",
+        increaseAgi: "Supportive",
+        decreaseAgi: "Active",
+        divineProtection: "Passive",
+        angelus: "Supportive",
+        demonBane: "Passive",
+        signumCrusis: "Supportive",
+        ruwach: "Offensive",
+        teleport: "Supportive",
+        warpPortal: "Supportive",
+        pneuma: "Supportive",
+        aquaBenedicta: "Active",
+        holyLight: "Offensive"
+    }
+};
+
 function formatSkillIcon(name) {
     return name
         .toLowerCase()       // lowercase
@@ -732,6 +817,14 @@ function updateSkillUI() {
         el.dataset.name = skill.name;
         el.dataset.desc = skill.desc;
 
+        // Determine skill type from skillTypes
+        const skillType = (skillTypes[job] && skillTypes[job][skillName]) ? skillTypes[job][skillName] : "Passive";
+        el.dataset.type = skillType;
+
+        // Mark quest skills
+        const isQuest = (jobSkills[job][skillName] && jobSkills[job][skillName].quest) || false;
+        if (isQuest) el.classList.add("quest-skill");
+
         el.innerHTML = `
             <img src="skills/${formatSkillIcon(skill.name)}.png"
                  onerror="this.src='skills/default.png'">
@@ -749,7 +842,6 @@ function updateSkillUI() {
         el.onclick = () => upgradeSkill(skillName);
 
         treeBody.appendChild(el);
-        
     });
 
     document.getElementById("skillPoints").innerText = `Skill Points: ${skillPoints}`;
@@ -765,7 +857,6 @@ function updateSkillUI() {
         container.style.transform = "scale(1)";
     }
 
-
     // ✅ BIND TOOLTIP AFTER ALL SKILL ELEMENTS EXIST
     bindSkillTooltips();
 }
@@ -773,9 +864,7 @@ function updateSkillUI() {
 // ===============================
 // SKILL TOOLTIPS
 // ===============================
-
 function bindSkillTooltips() {
-    // 🔥 prevent multiple tooltips
     let tooltip = document.querySelector('.skill-tooltip');
     if (!tooltip) {
         tooltip = document.createElement('div');
@@ -784,17 +873,37 @@ function bindSkillTooltips() {
     }
 
     const skills = document.querySelectorAll('.skill');
+    const job = document.getElementById("job").value;
 
     skills.forEach(skillEl => {
         const skillName = skillEl.dataset.skill;
-        const skill = jobSkills[document.getElementById("job").value][skillName];
+        const skill = jobSkills[job][skillName];
         if (!skill) return;
 
+        // 🔥 REMOVE browser tooltip (VERY IMPORTANT)
+        skillEl.removeAttribute("title");
+
+        // ✅ Reset old events (safe)
+        skillEl.onmouseenter = null;
+        skillEl.onmouseleave = null;
+        skillEl.onmousemove = null;
+        skillEl.onclick = null;
+
         skillEl.onmouseenter = () => {
+            const skillType = (skillTypes[job] && skillTypes[job][skillName]) 
+                                ? skillTypes[job][skillName] 
+                                : "Passive";
+
+            const isQuest = skill.type === "quest"; // 🔥 use your existing type
+            const displayType = skillType + (isQuest ? " (Quest Skill)" : "");
+
             tooltip.innerHTML = `
                 <strong>${skill.name}</strong><br>
-                <em>Max Level: ${skill.maxLevel}</em><br>
-                ${skill.desc}
+                ${skill.maxLevel ? `<em>Max Level: ${skill.maxLevel}</em><br>` : ""}
+                ${skill.desc}<br>
+                <div style="margin-top:4px; font-size:11px; color:${isQuest ? "#ff69b4" : "#ffd96a"};">
+                    Type: ${displayType}
+                </div>
             `;
             tooltip.classList.add('show');
         };
@@ -808,7 +917,6 @@ function bindSkillTooltips() {
             tooltip.style.top = e.clientY - 16 + 'px';
         };
 
-        // 🔥 force hide on click (important)
         skillEl.onclick = () => {
             tooltip.classList.remove('show');
             upgradeSkill(skillName);
@@ -842,14 +950,18 @@ function drawSkillConnections() {
         const fromRect = fromEl.getBoundingClientRect();
         const toRect = toEl.getBoundingClientRect();
 
-        // 🔥 compensate for scaling
-        const x1 = (fromRect.left + fromRect.width / 2 - parentRect.left) / scale;
-        const y1 = (fromRect.top + fromRect.height / 2 - parentRect.top) / scale;
-        const x2 = (toRect.left + toRect.width / 2 - parentRect.left) / scale;
-        const y2 = (toRect.top + toRect.height / 2 - parentRect.top) / scale;
+        // ✅ PERFECT CENTER (more stable)
+        const x1 = ((fromRect.left + fromRect.width / 2) - parentRect.left) / scale;
+        const y1 = ((fromRect.top + fromRect.height / 2) - parentRect.top) / scale;
 
-        const length = Math.hypot(x2 - x1, y2 - y1);
-        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+        const x2 = ((toRect.left + toRect.width / 2) - parentRect.left) / scale;
+        const y2 = ((toRect.top + toRect.height / 2) - parentRect.top) / scale;
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
         const line = document.createElement("div");
         line.className = "arrow-line";
