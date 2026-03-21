@@ -1,16 +1,12 @@
 // ===============================
 // SKILL TREE DATA and code
 // ===============================
-let playerSkills = {};
-let skillPoints = 0;
-let currentJobLevel = 1;
-
 // skills each job
- const jobSkills = {
+const jobSkills = {
     "Novice": {
         basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal", desc: "A simple beginner skill." },
-        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Recover small HP instantly.", quest: true, reqJob: 1 },
-        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to be dead to avoid attacks.", quest: true, req: { basicSkill: 7 }, reqJob: 1 }
+        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Recover small HP instantly.", quest: true, reqBase: 4 },
+        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to be dead to avoid attacks.", quest: true, reqBase: 4 }
     },
     "Swordsman": {
         swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage with swords." },
@@ -71,7 +67,7 @@ let currentJobLevel = 1;
         backSlide: { name: "Back Slide", maxLevel: 1, type: "quest", desc: "Move behind enemy.", quest: true, reqJob: 35 },
         findStone: { name: "Find Stone", maxLevel: 1, type: "quest", desc: "Locate items.", quest: true, reqJob: 20 },
         sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest", desc: "Blind enemies.", quest: true, reqJob: 25 },
-        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw stones.", quest: true, reqJob: 20 }
+        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw stones.", quest: true, reqJob: 15}
     },
     "Acolyte": {
         divineProtection: { name: "Divine Protection", maxLevel: 10, type: "normal", desc: "Reduce damage." },
@@ -91,7 +87,6 @@ let currentJobLevel = 1;
     }
 };
 
-// Skill line connections
 const skillConnections = {
     "Novice": [["basicSkill", "firstAid"], ["basicSkill", "playDead"]],
     "Swordsman": [["swordMastery", "twoHandedMastery"], ["bash", "magnumBreak"], ["provoke", "endure"]],
@@ -102,14 +97,13 @@ const skillConnections = {
     "Acolyte": [["divineProtection", "demonBane"], ["divineProtection", "angelus"], ["divineProtection", "safetyWall"], ["demonBane", "signumCrusis"], ["heal", "cure"], ["heal", "increaseAgi"], ["increaseAgi", "decreaseAgi"], ["ruwach", "teleport"], ["teleport", "warpPortal"], ["warpPortal", "pneuma"]]
 };
 
-// Skill node positioning (%)
 const skillTreeLayout = {
     "Novice": { basicSkill: { x: 50, y: 20 }, firstAid: { x: 35, y: 80 }, playDead: { x: 65, y: 80 } },
     "Swordsman": { swordMastery: { x: 50, y: 20 }, twoHandedMastery: { x: 50, y: 80 }, bash: { x: 30, y: 20 }, magnumBreak: { x: 30, y: 80 }, provoke: { x: 70, y: 20 }, endure: { x: 70, y: 80 }, increaseHP: { x: 50, y: 140 }, berserk: { x: 30, y: 200 }, fatalBlow: { x: 50, y: 200 }, movingHP: { x: 70, y: 200 } },
     "Mage": { fireBolt: { x: 50, y: 20 }, fireBall: { x: 50, y: 80 }, fireWall: { x: 50, y: 140 }, sight: { x: 30, y: 140 }, coldBolt: { x: 30, y: 20 }, frostDiver: { x: 30, y: 80 }, lightningBolt: { x: 70, y: 20 }, thunderstorm: { x: 70, y: 80 }, napalmBeat: { x: 50, y: 200 }, soulStrike: { x: 40, y: 260 }, safetyWall: { x: 60, y: 260 }, stoneCurse: { x: 30, y: 260 }, spRecovery: { x: 50, y: 320 }, energyCoat: { x: 50, y: 380 } },
     "Archer": { owlsEye: { x: 50, y: 20 }, vulturesEye: { x: 50, y: 80 }, improveConcentration: { x: 50, y: 140 }, doubleStrafe: { x: 35, y: 200 }, arrowShower: { x: 65, y: 200 }, arrowCrafting: { x: 35, y: 260 }, arrowRepel: { x: 65, y: 260 } },
     "Merchant": { enlargeWeight: { x: 50, y: 20 }, discount: { x: 30, y: 70 }, pushcart: { x: 70, y: 70 }, overcharge: { x: 30, y: 130 }, vending: { x: 70, y: 130 }, mammonite: { x: 30, y: 190 }, itemAppraisal: { x: 70, y: 190 }, cartRevolution: { x: 30, y: 250 }, changeCart: { x: 50, y: 250 }, crazyUproar: { x: 70, y: 250 } },
-    "Thief": { steal: { x: 50, y: 20 }, hiding: { x: 50, y: 80 }, envenom: { x: 30, y: 20 }, detoxify:{ x: 30, y: 80 }, doubleAttack: { x: 70, y: 20 }, improveDodge: { x: 70, y: 80 }, backSlide: { x: 20, y: 140 }, findStone: { x: 40, y: 140 }, sandAttack: { x: 60, y: 140 }, stoneFling: { x: 80, y: 140 } },
+    "Thief": { steal: { x: 50, y: 20 }, hiding: { x: 50, y: 80 }, envenom: { x: 30, y: 20 }, detoxify: { x: 30, y: 80 }, doubleAttack: { x: 70, y: 20 }, improveDodge: { x: 70, y: 80 }, backSlide: { x: 20, y: 140 }, findStone: { x: 40, y: 140 }, sandAttack: { x: 60, y: 140 }, stoneFling: { x: 80, y: 140 } },
     "Acolyte": { heal: { x: 50, y: 20 }, cure: { x: 30, y: 70 }, increaseAgi: { x: 70, y: 70 }, decreaseAgi: { x: 70, y: 130 }, divineProtection: { x: 50, y: 130 }, angelus: { x: 30, y: 130 }, demonBane: { x: 70, y: 190 }, signumCrusis: { x: 70, y: 250 }, ruwach: { x: 30, y: 190 }, teleport: { x: 30, y: 250 }, warpPortal: { x: 30, y: 310 }, pneuma: { x: 30, y: 370 }, aquaBenedicta: { x: 70, y: 310 }, holyLight: { x: 70, y: 370 } }
 };
 
@@ -124,24 +118,43 @@ const skillTypes = {
 };
 
 function formatSkillIcon(name) {
-    return name
-        .toLowerCase()       // lowercase
-        .replace(/\s+/g, '') // remove spaces
-        .replace(/[^a-z0-9]/g, ''); // remove special characters
+    return name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
 }
 
-function handleLevelChange() {
+function handleSkillLevelChange() {
     const jobLvlInput = document.getElementById("jobLevel"); 
+    const baseLvlInput = document.getElementById("baseLevel");
     if (!jobLvlInput) return;
 
     currentJobLevel = parseInt(jobLvlInput.value) || 1;
+    const currentBaseLevel = parseInt(baseLvlInput?.value) || 1;
     const currentJob = document.getElementById("job").value;
     
+    const skills = jobSkills[currentJob];
+    if (skills) {
+        Object.keys(skills).forEach(key => {
+            const skill = skills[key];
+            const isQuest = skill.quest === true || skill.type === "quest";
+            
+            if (isQuest) {
+                // --- NOVICE BASE LEVEL RULE ---
+                if (currentJob === "Novice") {
+                    // Auto-set to 1 if Base Lv reached, else 0
+                    playerSkills[key] = (currentBaseLevel >= (skill.reqBase || 4)) ? 1 : 0;
+                } else {
+                    // --- OTHER JOBS JOB LEVEL RULE ---
+                    const reqJobLvl = skill.reqJob || 1;
+                    playerSkills[key] = (currentJobLevel >= reqJobLvl) ? 1 : 0;
+                }
+            }
+        });
+    }
+
+    // Calculate total spent (Quest skills don't count toward spent points)
     let totalSpent = 0;
     Object.keys(playerSkills).forEach(key => {
         const skill = jobSkills[currentJob][key];
         const isQuest = skill?.quest === true || skill?.type === "quest";
-        // Quest skills are free, don't count them against point pool
         if (skill && !isQuest) {
             totalSpent += playerSkills[key];
         }
@@ -150,35 +163,32 @@ function handleLevelChange() {
     skillPoints = Math.max(0, (currentJobLevel - 1) - totalSpent);
     updateSkillUI();
 }
+
 function renderSkillsForJob(job) {
     const treeBody = document.getElementById("skillTreeBody");
-    treeBody.innerHTML = ""; // clear previous skills
-
+    treeBody.innerHTML = "";
     const skills = jobSkills[job];
     if (!skills) return;
 
     Object.keys(skills).forEach(key => {
         const skill = skills[key];
-
         const el = document.createElement("div");
         el.className = "skill";
         el.dataset.name = skill.name;
         el.dataset.desc = skill.desc;
-
         el.innerText = skill.name;
-
-        // optional: position will be handled by your updateSkillUI function
         treeBody.appendChild(el);
     });
 
-    // Optional: scale down automatically if too many skills
     const skillCount = Object.keys(skills).length;
     treeBody.style.transform = skillCount > 15 ? "scale(0.85)" : "scale(1)";
 }
+
 const jobSelect = document.getElementById("job");
 jobSelect.addEventListener("change", () => {
+    playerSkills = {}; 
     renderSkillsForJob(jobSelect.value);
-    updateSkillUI(); // keep your existing positioning, colors, connections
+    handleSkillLevelChange();
 });
 
 function getSkillState(skillName) {
@@ -189,64 +199,57 @@ function getSkillState(skillName) {
     const level = playerSkills[skillName] || 0;
     if (level > 0) return "learned";
 
-    // 1. Check Job Level Requirement
-    const requiredJobLevel = skill.reqJob || 1;
-    if (currentJobLevel < requiredJobLevel) return "locked";
+    const currentBaseLevel = parseInt(document.getElementById("baseLevel")?.value) || 1; 
+    const isQuest = skill.quest === true || skill.type === "quest";
+    const reqValue = skill.reqJob || 1;
 
-    // 2. Check Prerequisite Skills
+    // --- NOVICE BASE LVL vs OTHERS JOB LVL ---
+    if (job === "Novice") {
+        if (isQuest && currentBaseLevel < 4) return "locked";
+    } else {
+        if (currentJobLevel < reqValue) return "locked";
+    }
+
     if (skill.req) {
         for (const [reqSkill, reqLevel] of Object.entries(skill.req)) {
             if ((playerSkills[reqSkill] || 0) < reqLevel) return "locked";
         }
     }
 
-    // 3. Check Point Availability
-    const isQuest = skill.quest === true || skill.type === "quest";
     if (isQuest) return "available";
-
     return skillPoints > 0 ? "available" : "locked";
 }
 
 function updateSkillUI() {
     const job = document.getElementById("job").value;
     const treeBody = document.getElementById("skillTreeBody");
-
+    if (!treeBody) return;
     treeBody.innerHTML = "";
 
     const skills = jobSkills[job];
     const layout = skillTreeLayout[job];
-
     if (!skills || !layout) return;
 
     Object.keys(skills).forEach(skillName => {
         if (!(skillName in playerSkills)) playerSkills[skillName] = 0;
-
         const skill = skills[skillName];
         const pos = layout[skillName];
-
-        if (!pos) return; // skip if no layout
+        if (!pos) return;
 
         const el = document.createElement("div");
         el.className = "skill";
         el.dataset.skill = skillName;
-        el.dataset.name = skill.name;
-        el.dataset.desc = skill.desc;
-
-        // Determine skill type from skillTypes
         const skillType = (skillTypes[job] && skillTypes[job][skillName]) ? skillTypes[job][skillName] : "Passive";
         el.dataset.type = skillType;
 
-        // Mark quest skills
         const isQuest = (jobSkills[job][skillName] && jobSkills[job][skillName].quest) || false;
         if (isQuest) el.classList.add("quest-skill");
 
         el.innerHTML = `
-            <img src="skills/${formatSkillIcon(skill.name)}.png"
-                 onerror="this.src='skills/default.png'">
+            <img src="skills/${formatSkillIcon(skill.name)}.png" onerror="this.src='skills/default.png'">
             <span class="lvl">${playerSkills[skillName]}</span>
         `;
 
-        // 📍 TREE POSITIONING
         el.style.left = pos.x + "%";
         el.style.top = pos.y + "px";
         el.style.transform = "translateX(-50%)";
@@ -254,31 +257,17 @@ function updateSkillUI() {
         const state = getSkillState(skillName);
         el.classList.add(state);
         
-        //left click increse
         el.onclick = () => upgradeSkill(skillName);
-       //rght click decrease
         el.oncontextmenu = (e) => {
-        e.preventDefault(); // Prevents the browser's right-click menu
-        decreaseSkill(skillName);
-};
+            e.preventDefault();
+            decreaseSkill(skillName);
+        };
 
         treeBody.appendChild(el);
     });
 
     document.querySelector("#skillPoints .sp-value").innerText = skillPoints;
-
     setTimeout(drawSkillConnections, 50);
-
-    const container = document.getElementById("skillTreeBody");
-    const skillCount = Object.keys(skills).length;
-
-    if (skillCount > 15) {
-        container.style.transform = "scale(0.85)";
-    } else {
-        container.style.transform = "scale(1)";
-    }
-
-    //  BIND TOOLTIP AFTER ALL SKILL ELEMENTS EXIST
     bindSkillTooltips();
 }
 
@@ -287,17 +276,25 @@ function upgradeSkill(skillName) {
     const skill = jobSkills[job][skillName];
     if (!skill) return;
 
+    // --- RAGNAROK QUEST SKILL RULE ---
+    // If it's a quest skill, it is handled automatically by level requirements.
+    // We exit early so the user cannot manually add points.
+    const isQuest = skill.quest === true || skill.type === "quest";
+    if (isQuest) return; 
+
     const currentLevel = playerSkills[skillName] || 0;
     const state = getSkillState(skillName);
-
+    
+    // Check if locked or already at max level
     if (state === "locked" || currentLevel >= skill.maxLevel) return;
 
-    const isQuest = skill.quest === true || skill.type === "quest";
-    if (!isQuest && skillPoints <= 0) return; 
+    // Ensure user has enough skill points for normal skills
+    if (skillPoints <= 0) return; 
 
+    // Upgrade the skill and consume a point
     playerSkills[skillName]++;
-    if (!isQuest) skillPoints--; 
-
+    skillPoints--; 
+    
     updateSkillUI();
 }
 
@@ -305,39 +302,23 @@ function decreaseSkill(skillName) {
     const job = document.getElementById("job").value;
     const skill = jobSkills[job][skillName];
     const currentLevel = playerSkills[skillName] || 0;
-
-    // Can't decrease if it's already 0
     if (currentLevel <= 0) return;
 
-    // Can't decrease Quest Skills (standard RO logic)
     const isQuest = skill.quest === true || skill.type === "quest";
     if (isQuest) return;
 
-    // Prerequisite check: Can't decrease if other learned skills depend on this
     const isPrereqForLearnedSkill = Object.keys(jobSkills[job]).some(key => {
         const otherSkill = jobSkills[job][key];
-        //If another skill requires this skill at a certain level and is already learned
-        return otherSkill.req && 
-               otherSkill.req[skillName] && 
-               playerSkills[key] > 0 && 
-               currentLevel <= otherSkill.req[skillName];
+        return otherSkill.req && otherSkill.req[skillName] && playerSkills[key] > 0 && currentLevel <= otherSkill.req[skillName];
     });
 
-    if (isPrereqForLearnedSkill) {
-        console.warn("Cannot decrease: This skill is a prerequisite for another learned skill.");
-        return;
-    }
+    if (isPrereqForLearnedSkill) return;
 
-    // 4. Update points and level
     playerSkills[skillName]--;
-    skillPoints++; // Refund the point
-
+    skillPoints++;
     updateSkillUI();
 }
 
-// ===============================
-// SKILL TOOLTIPS
-// ===============================
 function bindSkillTooltips() {
     let tooltip = document.querySelector('.skill-tooltip') || document.createElement('div');
     if (!tooltip.className) {
@@ -347,6 +328,7 @@ function bindSkillTooltips() {
 
     const skills = document.querySelectorAll('.skill');
     const job = document.getElementById("job").value;
+    const currentBaseLevel = parseInt(document.getElementById("baseLevel")?.value) || 1;
 
     skills.forEach(skillEl => {
         const skillName = skillEl.dataset.skill;
@@ -355,9 +337,18 @@ function bindSkillTooltips() {
         skillEl.onmouseenter = () => {
             const skillType = (skillTypes[job] && skillTypes[job][skillName]) || "Passive";
             const isQuest = skill.type === "quest" || skill.quest === true;
+            let reqText = "";
             
-            let reqText = isQuest && job !== "Novice" ? 
-                `<br><span style="color:${currentJobLevel >= (skill.reqJob || 1) ? "#90ee90" : "#ff4d4d"}">Requires Job Lv: ${skill.reqJob || 1}</span>` : "";
+            if (isQuest) {
+                if (job === "Novice") {
+                    const met = currentBaseLevel >= 4;
+                    reqText = `<br><span style="color:${met ? "#90ee90" : "#ff4d4d"}">Requires Base Lv: 4</span>`;
+                } else {
+                    const reqJobLvl = skill.reqJob || 1;
+                    const met = currentJobLevel >= reqJobLvl;
+                    reqText = `<br><span style="color:${met ? "#90ee90" : "#ff4d4d"}">Requires Job Lv: ${reqJobLvl}</span>`;
+                }
+            }
 
             let prereqText = "";
             if (skill.req) {
@@ -387,82 +378,49 @@ function bindSkillTooltips() {
     });
 }
 
-
 function drawSkillConnections() {
     const job = document.getElementById("job").value;
     const layer = document.getElementById("skillConnections");
-
     if (!layer) return;
     layer.innerHTML = "";
-
     const connections = skillConnections[job];
     if (!connections) return;
 
     const treeBody = document.getElementById("skillTreeBody");
     const parentRect = treeBody.getBoundingClientRect();
-
-    const scale = treeBody.style.transform
-        ? parseFloat(treeBody.style.transform.replace("scale(", "").replace(")", ""))
-        : 1;
+    const scale = treeBody.style.transform ? parseFloat(treeBody.style.transform.replace("scale(", "").replace(")", "")) : 1;
 
     connections.forEach(([from, to]) => {
         const fromEl = document.querySelector(`[data-skill="${from}"]`);
         const toEl = document.querySelector(`[data-skill="${to}"]`);
-
         if (!fromEl || !toEl) return;
 
         const fromRect = fromEl.getBoundingClientRect();
         const toRect = toEl.getBoundingClientRect();
 
-        // ✅ PERFECT CENTER (more stable)
         const x1 = ((fromRect.left + fromRect.width / 2) - parentRect.left) / scale;
         const y1 = ((fromRect.top + fromRect.height / 2) - parentRect.top) / scale;
-
         const x2 = ((toRect.left + toRect.width / 2) - parentRect.left) / scale;
         const y2 = ((toRect.top + toRect.height / 2) - parentRect.top) / scale;
 
         const dx = x2 - x1;
         const dy = y2 - y1;
-
         const length = Math.sqrt(dx * dx + dy * dy);
         const angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
         const line = document.createElement("div");
         line.className = "arrow-line";
-
         line.style.width = `${length}px`;
         line.style.left = `${x1}px`;
         line.style.top = `${y1}px`;
         line.style.transform = `rotate(${angle}deg)`;
-
         layer.appendChild(line);
     });
 }
 
-function upgradeSkill(skillName) {
-    const job = document.getElementById("job").value;
-    const skill = jobSkills[job][skillName];
-    if (!skill) return;
-
-    const currentLevel = playerSkills[skillName] || 0;
-    const state = getSkillState(skillName);
-
-    if (state === "locked" || currentLevel >= skill.maxLevel) return;
-
-    const isQuest = skill.quest === true || skill.type === "quest";
-    if (!isQuest && skillPoints <= 0) return; 
-
-    playerSkills[skillName]++;
-    if (!isQuest) skillPoints--; 
-
-    updateSkillUI();
-}
-
 // Initial Event Listeners
-document.getElementById("job")?.addEventListener("change", () => {
-    playerSkills = {}; // Reset learned skills on job swap
-    handleLevelChange();
-});
+// Ensure both level changes trigger the check
+document.getElementById("jobLevel")?.addEventListener("input", handleSkillLevelChange);
+document.getElementById("baseLevel")?.addEventListener("input", handleSkillLevelChange);
 
-document.getElementById("jobLevel")?.addEventListener("input", handleLevelChange);
-//mao ni boy
+//anuu daw

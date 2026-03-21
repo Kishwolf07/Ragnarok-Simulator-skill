@@ -1,5 +1,13 @@
 // ===============================
-// CHARACTER IMAGE
+// GLOBAL TRACKING VARIABLES
+// ===============================
+let currentJobTracked = "Novice";
+let lastJobLevel = 1;
+let skillPoints = 0;
+let playerSkills = {};
+
+// ===============================
+// CHARACTER IMAGE & GENDER
 // ===============================
 function updateCharacterImage() {
     const job = document.getElementById("job").value;
@@ -29,7 +37,7 @@ function updateCharacterImage() {
 }
 
 // ===============================
-// TAB SYSTEM (BRING TO FRONT)
+// TAB SYSTEM
 // ===============================
 function switchPanel(panelName) {
     const tabs = document.querySelectorAll('.tab-btn');
@@ -45,16 +53,14 @@ function switchPanel(panelName) {
         document.getElementById('tab-skills').classList.add('active');
         document.getElementById('skillsPanel').classList.add('active');
         
-        // Refresh skills whenever the skill tab is brought to front
         if (typeof updateSkillUI === 'function') {
             updateSkillUI();
         }
     }
 }
 
-
 // ===============================
-// STAT POINT SYSTEM
+// STAT POINT FORMULAS
 // ===============================
 function getPointsForLevel(level) {
     if (level <= 4) return 3;
@@ -75,26 +81,6 @@ function getTotalStatPoints(level) {
     return total;
 }
 
-// JOB BONUSES DATA
-const jobBonuses = {
-    "Swordsman": { 1: [0, 0, 0, 0, 0, 0], 2: [1, 0, 0, 0, 0, 0], 6: [1, 0, 1, 0, 0, 0], 10: [1, 0, 1, 0, 1, 0], 14: [2, 0, 1, 0, 1, 0], 18: [2, 0, 2, 0, 1, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 0, 2, 1], 30: [2, 1, 2, 0, 2, 1], 33: [3, 1, 2, 0, 2, 1], 36: [3, 1, 2, 0, 3, 1], 38: [3,1,3,0,3,1], 40: [4, 1, 3, 0, 3, 1], 42: [4, 1, 4, 0, 3, 1], 44: [4, 1, 4, 0, 3, 2], 46: [4, 2, 4, 0, 3, 2], 47: [5, 2, 4, 0, 3, 2], 49: [6, 2, 4, 0, 3, 2], 50: [7, 2, 4, 0, 3, 2] },
-    "Mage": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 1, 0, 0], 6: [0, 0, 0, 1, 1, 0], 10: [0, 0, 0, 1, 2, 0], 14: [0, 0, 0, 2, 2, 0], 18: [0, 1, 0, 2, 2, 0], 22: [0, 1, 0, 3, 2, 0], 26: [0, 2, 0, 3, 2, 0], 30: [0, 2, 0, 3, 2, 1], 33: [0, 2, 0, 4, 2, 1], 36: [0, 2, 0, 4, 3, 1], 38: [0, 2, 0, 5, 3, 1], 40: [0, 3, 0, 5, 3, 1], 42: [0, 3, 0, 5, 3, 2], 44: [0, 3, 0, 6, 3, 2], 46: [0, 3, 0, 7, 3, 2], 47: [0, 4, 0, 7, 3, 2], 49: [0, 4, 0, 7, 3, 3], 50: [0, 4, 0, 8, 3, 3] },
-    "Archer": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 0, 1, 0], 6: [1, 0, 0, 0, 1, 0], 10: [1, 0, 0, 1, 1, 0], 14: [1, 0, 0, 1, 2, 0], 18: [1, 0, 0, 1, 3, 0], 22: [1, 0, 0, 1, 3, 1], 26: [1, 1, 0, 1, 3, 1], 30: [1, 1, 0, 1, 4, 1], 33: [1, 2, 0, 1, 4, 1], 36: [1, 2, 0, 1, 5, 1], 38: [2, 2, 0, 1, 5, 1], 40: [3, 2, 0, 1, 5, 1], 42: [3, 2, 0, 1, 6, 1], 44: [3, 2, 0, 1, 6, 2], 46: [3, 2, 1, 1, 6, 2], 47: [3, 2, 1, 2, 6, 2], 49: [3, 3, 1, 2, 6, 2], 50: [3, 3, 1, 2, 7, 2] },
-    "Merchant": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 1, 0, 0, 0], 6: [0, 0, 1, 0, 1, 0], 10: [1, 0, 1, 0, 1, 0], 14: [1, 0, 1, 0, 2, 0], 18: [1, 0, 2, 0, 2, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 1, 2, 0], 30: [2, 0, 3, 1, 2, 0], 33: [2, 1, 3, 1, 2, 0], 36: [2, 1, 3, 1, 2, 1], 38: [2, 1, 3, 1, 3, 1], 40: [3, 1, 3, 1, 3, 1], 42: [3, 1, 3, 1, 4, 1], 44: [4, 1, 3, 1, 4, 1], 46: [4, 1, 3, 1, 4, 2], 47: [4, 1, 4, 1, 4, 2], 49: [5, 1, 4, 1, 4, 2], 50: [5, 1, 4, 1, 5, 2] },
-    "Thief": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 1, 0, 0, 0, 0], 6: [1, 1, 0, 0, 0, 0], 10: [1, 1, 0, 0, 1, 0], 14: [1, 1, 1, 0, 1, 0], 18: [1, 1, 1, 1, 1, 0], 22: [1, 1, 1, 1, 2, 0], 26: [1, 1, 1, 1, 2, 1], 30: [2, 1, 1, 1, 2, 1], 33: [2, 2, 1, 1, 2, 1], 36: [2, 3, 1, 1, 2, 1], 38: [3, 3, 1, 1, 2, 1], 40: [3, 3, 1, 1, 2, 2], 42: [3, 3, 1, 1, 3, 2], 44: [3, 3, 2, 1, 3, 2], 46: [3, 3, 2, 1, 3, 3], 47: [4, 3, 2, 1, 3, 3], 49: [4, 3, 2, 1, 4, 3], 50: [4, 4, 2, 1, 4, 3] },
-    "Acolyte": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 0, 0, 1], 6: [0, 0, 1, 0, 0, 1], 10: [0, 0, 1, 1, 0, 1], 14: [0, 0, 1, 1, 1, 1], 18: [0, 0, 1, 1, 1, 2], 22: [0, 1, 1, 1, 1, 2], 26: [1, 1, 1, 1, 1, 2], 30: [1, 1, 2, 1, 1, 2], 36: [1, 1, 2, 2, 2, 2], 38: [1, 1, 2, 2, 2, 3], 40: [1, 2, 2, 2, 2, 3], 42: [2, 2, 2, 2, 2, 3], 44: [2, 2, 3, 2, 2, 3], 46: [2, 2, 3, 3, 3, 3], 49: [3, 2, 3, 3, 3, 3], 50: [3, 2, 3, 3, 3, 4] }
-};
-
-//bonus fomula
-function getBonusForJobLevel(job, level) {
-    const classData = jobBonuses[job] || { 1: [0, 0, 0, 0, 0, 0] };
-    const sortedLevels = Object.keys(classData).map(Number).sort((a, b) => a - b);
-    let activeLevel = 1;
-    for (let l of sortedLevels) { if (l <= level) activeLevel = l; else break; }
-    return classData[activeLevel];
-}
-
-//StatCost
 function getStatCost(currentValue) {
     if (currentValue < 11) return 2;
     if (currentValue < 21) return 3;
@@ -108,7 +94,6 @@ function getStatCost(currentValue) {
     return 11;
 }
 
-//total cost
 function getTotalCost(statValue) {
     let total = 0;
     for (let i = 1; i < statValue; i++) total += getStatCost(i);
@@ -116,62 +101,25 @@ function getTotalCost(statValue) {
 }
 
 // ===============================
-// REGEN & HP CALCULATIONS
-// ===============================
-function calculateBaseHP(level, hpFactor, job) {
-    // Swordsmen get a +2 head-start in the engine's HP constants
-    let baseHP = (job === "Swordsman") ? 37 : 35;
-    
-    // Add the level-based growth (Level * 5)
-    baseHP += (level * 5); 
-
-    // Use Math.round as we confirmed it matches the engine
-    for (let i = 2; i <= level; i++) {
-        baseHP += Math.round(hpFactor * i); 
-    }
-    
-    return baseHP;
-}
-
-function calculateHPRegen(maxHP, vit, hprMod = 0) {
-    //Base recovery from HP
-    let hpPart = Math.floor(maxHP / 200);
-    //Base recovery from VIT
-    let vitPart = Math.floor(vit / 5);
-    let baseConstant = 1;
-    let hpr = hpPart + vitPart + baseConstant;
-    hpr = Math.floor(hpr * (1 + hprMod * 0.01));
-
-    return hpr;
-}
-
-function calculateSPRegen(maxSP, int) {
-    let spr = 1 + Math.floor(maxSP / 100) + Math.floor(int / 6);
-    if (int >= 120) spr += Math.floor(int / 2 - 56);
-    return Math.floor(spr);
-}
-
-// ===============================
 // DATA TABLES
 // ===============================
+const jobBonuses = {
+    "Swordsman": { 1: [0, 0, 0, 0, 0, 0], 2: [1, 0, 0, 0, 0, 0], 6: [1, 0, 1, 0, 0, 0], 10: [1, 0, 1, 0, 1, 0], 14: [2, 0, 1, 0, 1, 0], 18: [2, 0, 2, 0, 1, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 0, 2, 1], 30: [2, 1, 2, 0, 2, 1], 33: [3, 1, 2, 0, 2, 1], 36: [3, 1, 2, 0, 3, 1], 38: [3,1,3,0,3,1], 40: [4, 1, 3, 0, 3, 1], 42: [4, 1, 4, 0, 3, 1], 44: [4, 1, 4, 0, 3, 2], 46: [4, 2, 4, 0, 3, 2], 47: [5, 2, 4, 0, 3, 2], 49: [6, 2, 4, 0, 3, 2], 50: [7, 2, 4, 0, 3, 2] },
+    "Mage": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 1, 0, 0], 6: [0, 0, 0, 1, 1, 0], 10: [0, 0, 0, 1, 2, 0], 14: [0, 0, 0, 2, 2, 0], 18: [0, 1, 0, 2, 2, 0], 22: [0, 1, 0, 3, 2, 0], 26: [0, 2, 0, 3, 2, 0], 30: [0, 2, 0, 3, 2, 1], 33: [0, 2, 0, 4, 2, 1], 36: [0, 2, 0, 4, 3, 1], 38: [0, 2, 0, 5, 3, 1], 40: [0, 3, 0, 5, 3, 1], 42: [0, 3, 0, 5, 3, 2], 44: [0, 3, 0, 6, 3, 2], 46: [0, 3, 0, 7, 3, 2], 47: [0, 4, 0, 7, 3, 2], 49: [0, 4, 0, 7, 3, 3], 50: [0, 4, 0, 8, 3, 3] },
+    "Archer": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 0, 1, 0], 6: [1, 0, 0, 0, 1, 0], 10: [1, 0, 0, 1, 1, 0], 14: [1, 0, 0, 1, 2, 0], 18: [1, 0, 0, 1, 3, 0], 22: [1, 0, 0, 1, 3, 1], 26: [1, 1, 0, 1, 3, 1], 30: [1, 1, 0, 1, 4, 1], 33: [1, 2, 0, 1, 4, 1], 36: [1, 2, 0, 1, 5, 1], 38: [2, 2, 0, 1, 5, 1], 40: [3, 2, 0, 1, 5, 1], 42: [3, 2, 0, 1, 6, 1], 44: [3, 2, 0, 1, 6, 2], 46: [3, 2, 1, 1, 6, 2], 47: [3, 2, 1, 2, 6, 2], 49: [3, 3, 1, 2, 6, 2], 50: [3, 3, 1, 2, 7, 2] },
+    "Merchant": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 1, 0, 0, 0], 6: [0, 0, 1, 0, 1, 0], 10: [1, 0, 1, 0, 1, 0], 14: [1, 0, 1, 0, 2, 0], 18: [1, 0, 2, 0, 2, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 1, 2, 0], 30: [2, 0, 3, 1, 2, 0], 33: [2, 1, 3, 1, 2, 0], 36: [2, 1, 3, 1, 2, 1], 38: [2, 1, 3, 1, 3, 1], 40: [3, 1, 3, 1, 3, 1], 42: [3, 1, 3, 1, 4, 1], 44: [4, 1, 3, 1, 4, 1], 46: [4, 1, 3, 1, 4, 2], 47: [4, 1, 4, 1, 4, 2], 49: [5, 1, 4, 1, 4, 2], 50: [5, 1, 4, 1, 5, 2] },
+    "Thief": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 1, 0, 0, 0, 0], 6: [1, 1, 0, 0, 0, 0], 10: [1, 1, 0, 0, 1, 0], 14: [1, 1, 1, 0, 1, 0], 18: [1, 1, 1, 1, 1, 0], 22: [1, 1, 1, 1, 2, 0], 26: [1, 1, 1, 1, 2, 1], 30: [2, 1, 1, 1, 2, 1], 33: [2, 2, 1, 1, 2, 1], 36: [2, 3, 1, 1, 2, 1], 38: [3, 3, 1, 1, 2, 1], 40: [3, 3, 1, 1, 2, 2], 42: [3, 3, 1, 1, 3, 2], 44: [3, 3, 2, 1, 3, 2], 46: [3, 3, 2, 1, 3, 3], 47: [4, 3, 2, 1, 3, 3], 49: [4, 3, 2, 1, 4, 3], 50: [4, 4, 2, 1, 4, 3] },
+    "Acolyte": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 0, 0, 1], 6: [0, 0, 1, 0, 0, 1], 10: [0, 0, 1, 1, 0, 1], 14: [0, 0, 1, 1, 1, 1], 18: [0, 0, 1, 1, 1, 2], 22: [0, 1, 1, 1, 1, 2], 26: [1, 1, 1, 1, 1, 2], 30: [1, 1, 2, 1, 1, 2], 36: [1, 1, 2, 2, 2, 2], 38: [1, 1, 2, 2, 2, 3], 40: [1, 2, 2, 2, 2, 3], 42: [2, 2, 2, 2, 2, 3], 44: [2, 2, 3, 2, 2, 3], 46: [2, 2, 3, 3, 3, 3], 49: [3, 2, 3, 3, 3, 3], 50: [3, 2, 3, 3, 3, 4] }
+};
+
 const jobData = {
-    Novice: { hpFactor: 0, spFactor: 1, maxJob: 9 },
+    Novice: { hpFactor: 0, spFactor: 1, maxJob: 10 },
     Swordsman: { hpFactor: 0.7, spFactor: 2, maxJob: 50 },
     Mage: { hpFactor: 0.3, spFactor: 6, maxJob: 50 },
     Archer: { hpFactor: 0.5, spFactor: 2, maxJob: 50 },
     Thief: { hpFactor: 0.5, spFactor: 2, maxJob: 50 },
     Acolyte: { hpFactor: 0.4, spFactor: 5, maxJob: 50 },
     Merchant: { hpFactor: 0.4, spFactor: 3, maxJob: 50 }
-};
-
-const jobWeapons = {
-    Novice: ["Hand", "Dagger", "One-handed Sword", "One-handed Axe", "One-handed Mace", "Two-handed Mace", "Rod & Staff", "Two-handed Staff"],
-    Swordsman: ["Hand", "Dagger", "One-handed Sword", "Two-handed Sword", "One-handed Spear", "Two-handed Spear", "One-handed Axe", "Two-handed Axe", "One-handed Mace", "Two-handed Mace"],
-    Mage: ["Hand", "Dagger", "Rod & Staff", "Two-handed Staff"],
-    Archer: ["Hand", "Dagger", "Bow"],
-    Thief: ["Hand", "Dagger", "One-handed Sword", "One-handed Axe", "Bow"],
-    Acolyte: ["Hand", "One-handed Mace", "Two-handed Mace", "Rod & Staff", "Two-handed Staff"],
-    Merchant: ["Hand", "Dagger", "One-handed Sword", "One-handed Axe", "Two-handed Axe", "One-handed Mace", "Two-handed Mace"]
 };
 
 const jobWeaponBTBA = {
@@ -187,8 +135,38 @@ const jobWeaponBTBA = {
 const jobWeightModifier = { "Novice": 0, "Swordsman": 800, "Mage": 200, "Archer": 600, "Thief": 400, "Acolyte": 400, "Merchant": 800 };
 
 // ===============================
-// CALCULATIONS
+// CORE CALCULATIONS
 // ===============================
+function getBonusForJobLevel(job, level) {
+    const classData = jobBonuses[job] || { 1: [0, 0, 0, 0, 0, 0] };
+    const sortedLevels = Object.keys(classData).map(Number).sort((a, b) => a - b);
+    let activeLevel = 1;
+    for (let l of sortedLevels) { if (l <= level) activeLevel = l; else break; }
+    return classData[activeLevel];
+}
+
+function calculateBaseHP(level, hpFactor, job) {
+    let baseHP = (job === "Swordsman") ? 37 : 35;
+    baseHP += (level * 5); 
+    for (let i = 2; i <= level; i++) {
+        baseHP += Math.round(hpFactor * i); 
+    }
+    return baseHP;
+}
+
+function calculateHPRegen(maxHP, vit, hprMod = 0) {
+    let hpPart = Math.floor(maxHP / 200);
+    let vitPart = Math.floor(vit / 5);
+    let hpr = hpPart + vitPart + 1;
+    return Math.floor(hpr * (1 + hprMod * 0.01));
+}
+
+function calculateSPRegen(maxSP, int) {
+    let spr = 1 + Math.floor(maxSP / 100) + Math.floor(int / 6);
+    if (int >= 120) spr += Math.floor(int / 2 - 56);
+    return Math.floor(spr);
+}
+
 function calculateASPD(job, weapon, agi, dex) {
     const btba = (jobWeaponBTBA[job] && jobWeaponBTBA[job][weapon]) ? jobWeaponBTBA[job][weapon] : 1.0;
     let WD = 50 * btba;
@@ -198,11 +176,23 @@ function calculateASPD(job, weapon, agi, dex) {
     return Math.min(Math.max(aspd, 0), 190);
 }
 
+// ===============================
+// UI HELPERS
+// ===============================
 function updateWeaponOptions() {
     const job = document.getElementById("job").value;
     const weaponSelect = document.getElementById("weapon");
+    const weapons = {
+        Novice: ["Hand", "Dagger", "One-handed Sword", "One-handed Axe", "One-handed Mace", "Two-handed Mace", "Rod & Staff", "Two-handed Staff"],
+        Swordsman: ["Hand", "Dagger", "One-handed Sword", "Two-handed Sword", "One-handed Spear", "Two-handed Spear", "One-handed Axe", "Two-handed Axe", "One-handed Mace", "Two-handed Mace"],
+        Mage: ["Hand", "Dagger", "Rod & Staff", "Two-handed Staff"],
+        Archer: ["Hand", "Dagger", "Bow"],
+        Thief: ["Hand", "Dagger", "One-handed Sword", "One-handed Axe", "Bow"],
+        Acolyte: ["Hand", "One-handed Mace", "Two-handed Mace", "Rod & Staff", "Two-handed Staff"],
+        Merchant: ["Hand", "Dagger", "One-handed Sword", "One-handed Axe", "Two-handed Axe", "One-handed Mace", "Two-handed Mace"]
+    };
     weaponSelect.innerHTML = "";
-    (jobWeapons[job] || ["Hand"]).forEach(w => {
+    (weapons[job] || ["Hand"]).forEach(w => {
         let option = document.createElement("option");
         option.value = w; option.textContent = w;
         weaponSelect.appendChild(option);
@@ -212,15 +202,19 @@ function updateWeaponOptions() {
 // ===============================
 // MAIN UPDATE FUNCTION
 // ===============================
-
 function updateStats(changedStatId) {
-
-    let jobLevel = parseInt(document.getElementById("jobLevel").value) || 1;
+    const jobLevelInput = document.getElementById("jobLevel");
+    let jobLevel = parseInt(jobLevelInput.value) || 1;
     let job = document.getElementById("job").value;
+    let jobInfo = jobData[job] || jobData["Novice"];
 
-    // ===============================
-    // HANDLE JOB CHANGE (RESET SKILLS)
-    // ===============================
+    // 1. Job Level Limit Validation
+    if (jobLevel > jobInfo.maxJob) {
+        jobLevel = jobInfo.maxJob;
+        jobLevelInput.value = jobInfo.maxJob;
+    }
+
+    // 2. Handle Job Switch Logic
     if (job !== currentJobTracked) {
         playerSkills = {};
         skillPoints = 0;
@@ -228,35 +222,20 @@ function updateStats(changedStatId) {
         currentJobTracked = job;
     }
 
-    // ===============================
-    // SKILL POINT GAIN
-    // ===============================
     if (jobLevel > lastJobLevel) {
         skillPoints += (jobLevel - lastJobLevel);
-    } 
-    else if (jobLevel < lastJobLevel) {
-        // optional: reset if level goes down
-        skillPoints = 0;
+    } else if (jobLevel < lastJobLevel) {
+        skillPoints = 0; // Reset as per your structure
     }
-
     lastJobLevel = jobLevel;
 
-    //Validation for Base Level
+    // 3. Base Level Validation
     const baseLevelInput = document.getElementById("baseLevel");
     let level = parseInt(baseLevelInput.value) || 1;
-
     if (level > 99) { level = 99; baseLevelInput.value = 99; }
     else if (level < 1) { level = 1; baseLevelInput.value = 1; }
 
-    let weapon = document.getElementById("weapon").value;
-    let jobInfo = jobData[job] || jobData["Novice"];
-
-    if (parseInt(document.getElementById("jobLevel").value) > jobInfo.maxJob) {
-        document.getElementById("jobLevel").value = jobInfo.maxJob;
-    }
-
-    // Calculate effective stats
-    // We use Math.max(1, ...) to ensure stats never drop below 1
+    // 4. Raw Stats & Points Validation (Rollback)
     let rawStats = {
         str: Math.max(1, parseInt(document.getElementById("str").value) || 1),
         agi: Math.max(1, parseInt(document.getElementById("agi").value) || 1),
@@ -266,25 +245,21 @@ function updateStats(changedStatId) {
         luk: Math.max(1, parseInt(document.getElementById("luk").value) || 1)
     };
 
-    //Point Validation & Automatic Rollback
     let totalPoints = getTotalStatPoints(level);
     let spentPoints = getTotalCost(rawStats.str) + getTotalCost(rawStats.agi) + getTotalCost(rawStats.vit) +
-        getTotalCost(rawStats.int) + getTotalCost(rawStats.dex) + getTotalCost(rawStats.luk);
+                      getTotalCost(rawStats.int) + getTotalCost(rawStats.dex) + getTotalCost(rawStats.luk);
 
-    // If points are exceeded, force the changed stat down until it is valid
     if (changedStatId && spentPoints > totalPoints) {
         let el = document.getElementById(changedStatId);
-        // This loop aggressively lowers the value until it fits the points
         while (spentPoints > totalPoints && parseInt(el.value) > 1) {
             el.value = parseInt(el.value) - 1;
             rawStats[changedStatId] = parseInt(el.value);
             spentPoints = getTotalCost(rawStats.str) + getTotalCost(rawStats.agi) + getTotalCost(rawStats.vit) +
-                getTotalCost(rawStats.int) + getTotalCost(rawStats.dex) + getTotalCost(rawStats.luk);
+                          getTotalCost(rawStats.int) + getTotalCost(rawStats.dex) + getTotalCost(rawStats.luk);
         }
-        // Proceed with the new corrected values
     }
 
-    //bonus calculation
+    // 5. Bonuses & Effective Stats
     const bonuses = getBonusForJobLevel(job, jobLevel);
     const bonusIds = ["strBonus", "agiBonus", "vitBonus", "intBonus", "dexBonus", "lukBonus"];
     bonusIds.forEach((id, index) => { document.getElementById(id).innerText = bonuses[index]; });
@@ -298,43 +273,40 @@ function updateStats(changedStatId) {
         luk: rawStats.luk + bonuses[5]
     };
 
-    //required cost
-    const statKeys = ['str', 'agi', 'vit', 'int', 'dex', 'luk'];
-    statKeys.forEach(key => { document.getElementById(key + "Req").innerText = getStatCost(rawStats[key]); });
+    ['str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(key => { 
+        document.getElementById(key + "Req").innerText = getStatCost(rawStats[key]); 
+    });
 
-    //weight
+    // 6. HP/SP Bars & Values (FIXED UI SYNC)
     let weight = 2000 + (30 * stats.str) + (jobWeightModifier[job] || 0);
     let baseHP = calculateBaseHP(level, jobInfo.hpFactor, job);   
     let maxHP = Math.floor(baseHP * (1 + stats.vit * 0.01));
     let maxSP = Math.floor((10 + (level * jobInfo.spFactor)) * (1 + stats.int * 0.01));
 
-    //hp,sp value
     document.getElementById("weight").innerText = weight;
     document.getElementById("hpValue").innerText = maxHP;
     document.getElementById("spValue").innerText = maxSP;
 
+    // Visual Bar Updates
     const hpPercent = Math.min((maxHP / 20000) * 100, 100);
     const spPercent = Math.min((maxSP / 5000) * 100, 100);
-    const hpBar = document.getElementById("hpBar");
-    const spBar = document.getElementById("spBar");
-    hpBar.style.width = hpPercent + "%";
-    hpBar.querySelector("span").innerText = Math.floor(hpPercent) + "%";    
-    spBar.style.width = spPercent + "%";
-    spBar.querySelector("span").innerText = Math.floor(spPercent) + "%";
+    
+    document.getElementById("hpBar").style.width = hpPercent + "%";
+    document.getElementById("hpText").innerText = Math.floor(hpPercent) + "%";    
+    document.getElementById("spBar").style.width = spPercent + "%";
+    document.getElementById("spText").innerText = Math.floor(spPercent) + "%";
 
-    //hp,sp regen
-    const hpr = calculateHPRegen(maxHP, stats.vit);
-    document.getElementById("hpRegen").innerText = hpr;
+    document.getElementById("hpRegen").innerText = calculateHPRegen(maxHP, stats.vit);
     document.getElementById("spRegen").innerText = calculateSPRegen(maxSP, stats.int);
     document.getElementById("statusPoints").innerText = Math.max(totalPoints - spentPoints, 0);
 
-
-    //status information
+    // 7. Status Information
+    let weapon = document.getElementById("weapon").value;
     let baseAtk = (weapon === "Bow")
         ? (stats.dex + Math.pow(Math.floor(stats.dex / 10), 2) + Math.floor(stats.str / 5) + Math.floor(stats.luk / 5))
         : (stats.str + Math.pow(Math.floor(stats.str / 10), 2) + Math.floor(stats.dex / 5) + Math.floor(stats.luk / 5));
+    
     document.getElementById("atk").innerText = baseAtk + " + 0";
-
     let matkMin = stats.int + Math.pow(Math.floor(stats.int / 7), 2);
     let matkMax = stats.int + Math.pow(Math.floor(stats.int / 5), 2);
     document.getElementById("matk").innerText = matkMin + " ~ " + matkMax;
@@ -346,21 +318,18 @@ function updateStats(changedStatId) {
     document.getElementById("critical").innerText = Math.floor(stats.luk * 0.3) + 1;
     document.getElementById("aspd").innerText = calculateASPD(job, weapon, stats.agi, stats.dex);
 
-    if (document.getElementById('skillsPanel').classList.contains('active')) {
-    updateSkillUI();
-}
+    if (document.getElementById('skillsPanel').classList.contains('active') && typeof updateSkillUI === 'function') {
+        updateSkillUI();
+    }
 }
 
-//reset button function
 function resetCharacter() {
     document.getElementById("baseLevel").value = 1;
     document.getElementById("jobLevel").value = 1;
     document.getElementById("job").value = "Novice";
-    const stats = ["str", "agi", "vit", "int", "dex", "luk"];
-    stats.forEach(s => document.getElementById(s).value = 1);
+    ["str", "agi", "vit", "int", "dex", "luk"].forEach(s => document.getElementById(s).value = 1);
     updateWeaponOptions();
     updateCharacterImage();
     updateStats();
     switchPanel('stats');
 }
-
