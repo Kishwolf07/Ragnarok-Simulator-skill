@@ -90,11 +90,11 @@ const jobSkills = {
 const skillConnections = {
     "Novice": [["basicSkill", "firstAid"], ["basicSkill", "playDead"]],
     "Swordsman": [["swordMastery", "twoHandedMastery"], ["bash", "magnumBreak"], ["provoke", "endure"]],
-    "Mage": [["napalmBeat", "soulStrike"], ["napalmBeat", "safetyWall"], ["sight", "fireWall"], ["fireBolt", "fireBall"], ["fireBall", "fireWall"], ["coldBolt", "frostDiver"], ["lightningBolt", "thunderstorm"]],
+    "Mage": [["napalmBeat", "soulStrike"], ["soulStrike", "safetyWall"], ["sight", "fireWall"], ["fireBolt", "fireBall"], ["fireBall", "fireWall"], ["coldBolt", "frostDiver"], ["lightningBolt", "thunderstorm"]],
     "Archer": [["owlsEye", "vulturesEye"], ["vulturesEye", "improveConcentration"], ["doubleStrafe", "arrowShower"]],
     "Merchant": [["enlargeWeight", "discount"], ["enlargeWeight", "pushcart"], ["discount", "overcharge"], ["pushcart", "vending"]],
     "Thief": [["steal", "hiding"], ["envenom", "detoxify"]],
-    "Acolyte": [["divineProtection", "demonBane"], ["divineProtection", "angelus"], ["divineProtection", "safetyWall"], ["demonBane", "signumCrusis"], ["heal", "cure"], ["heal", "increaseAgi"], ["increaseAgi", "decreaseAgi"], ["ruwach", "teleport"], ["teleport", "warpPortal"], ["warpPortal", "pneuma"]]
+    "Acolyte": [["divineProtection", "demonBane"], ["divineProtection", "angelus"], ["demonBane", "signumCrusis"], ["heal", "cure"], ["heal", "increaseAgi"], ["increaseAgi", "decreaseAgi"], ["ruwach", "teleport"], ["teleport", "warpPortal"], ["warpPortal", "pneuma"]]
 };
 
 const skillTreeLayout = {
@@ -111,8 +111,7 @@ const skillTypes = {
     "Novice": { basicSkill: "Passive", firstAid: "Supportive", playDead: "Supportive" },
     "Swordsman": { swordMastery: "Passive", twoHandedMastery: "Passive", bash: "Offensive", magnumBreak: "Offensive", provoke: "Active", endure: "Active", increaseHP: "Passive", berserk: "Passive", fatalBlow: "Passive", movingHP: "Passive" },
     "Mage": { fireBolt: "Offensive", fireBall: "Offensive", fireWall: "Offensive", sight: "Active", coldBolt: "Offensive", frostDiver: "Offensive", lightningBolt: "Offensive", thunderstorm: "Offensive", napalmBeat: "Offensive", soulStrike: "Offensive", safetyWall: "Supportive", stoneCurse: "Active", spRecovery: "Passive", energyCoat: "Supportive" },
-    "Archer": { owlsEye: "Passive", vulturesEye: "Passive", improveConcentration: "Suppotive", doubleStrafe: "Offensive", arrowShower: "Offensive", arrowCrafting: "Active", arrowRepel: "Offensive" },
-    "Merchant": { enlargeWeight: "Passive", discount: "Passive", pushcart: "Passive", overcharge: "Passive", vending: "Active", mammonite: "Offensive", itemAppraisal: "Active", cartRevolution: "Offensive", changeCart: "Active", crazyUproar: "Supportive" },
+    "Archer": { owlsEye: "Passive", vulturesEye: "Passive", improveConcentration: "Supportive", doubleStrafe: "Offensive", arrowShower: "Offensive", arrowCrafting: "Active", arrowRepel: "Offensive" },    "Merchant": { enlargeWeight: "Passive", discount: "Passive", pushcart: "Passive", overcharge: "Passive", vending: "Active", mammonite: "Offensive", itemAppraisal: "Active", cartRevolution: "Offensive", changeCart: "Active", crazyUproar: "Supportive" },
     "Thief": { steal: "Active", hiding: "Active", envenom: "Offensive", detoxify: "Supportive", doubleAttack: "Passive", improveDodge: "Passive", backSlide: "Active", findStone: "Active", sandAttack: "Offensive", stoneFling: "Offensive" },
     "Acolyte": { heal: "Supportive", cure: "Supportive", increaseAgi: "Supportive", decreaseAgi: "Active", divineProtection: "Passive", angelus: "Supportive", demonBane: "Passive", signumCrusis: "Supportive", ruwach: "Offensive", teleport: "Supportive", warpPortal: "Supportive", pneuma: "Supportive", aquaBenedicta: "Active", holyLight: "Offensive" }
 };
@@ -124,25 +123,24 @@ function formatSkillIcon(name) {
 function handleSkillLevelChange() {
     const jobLvlInput = document.getElementById("jobLevel"); 
     const baseLvlInput = document.getElementById("baseLevel");
+    const currentJob = document.getElementById("job").value;
     if (!jobLvlInput) return;
 
     currentJobLevel = parseInt(jobLvlInput.value) || 1;
     const currentBaseLevel = parseInt(baseLvlInput?.value) || 1;
-    const currentJob = document.getElementById("job").value;
     
     const skills = jobSkills[currentJob];
     if (skills) {
         Object.keys(skills).forEach(key => {
+            if (!(key in playerSkills)) playerSkills[key] = 0; // Initialize if missing
+            
             const skill = skills[key];
             const isQuest = skill.quest === true || skill.type === "quest";
             
             if (isQuest) {
-                // --- NOVICE BASE LEVEL RULE ---
                 if (currentJob === "Novice") {
-                    // Auto-set to 1 if Base Lv reached, else 0
                     playerSkills[key] = (currentBaseLevel >= (skill.reqBase || 4)) ? 1 : 0;
                 } else {
-                    // --- OTHER JOBS JOB LEVEL RULE ---
                     const reqJobLvl = skill.reqJob || 1;
                     playerSkills[key] = (currentJobLevel >= reqJobLvl) ? 1 : 0;
                 }
@@ -150,12 +148,11 @@ function handleSkillLevelChange() {
         });
     }
 
-    // Calculate total spent (Quest skills don't count toward spent points)
+    // Recalculate Skill Points
     let totalSpent = 0;
     Object.keys(playerSkills).forEach(key => {
         const skill = jobSkills[currentJob][key];
-        const isQuest = skill?.quest === true || skill?.type === "quest";
-        if (skill && !isQuest) {
+        if (skill && !(skill.quest || skill.type === "quest")) {
             totalSpent += playerSkills[key];
         }
     });
@@ -186,7 +183,11 @@ function renderSkillsForJob(job) {
 
 const jobSelect = document.getElementById("job");
 jobSelect.addEventListener("change", () => {
-    playerSkills = {}; 
+    playerSkills = {}; // Reset learned skills on job change
+    
+    const treeBody = document.getElementById("skillTreeBody");
+    if(treeBody) treeBody.style.transform = "scale(1)";
+    
     renderSkillsForJob(jobSelect.value);
     handleSkillLevelChange();
 });
@@ -276,7 +277,6 @@ function upgradeSkill(skillName) {
     const skill = jobSkills[job][skillName];
     if (!skill) return;
 
-    // --- RAGNAROK QUEST SKILL RULE ---
     // If it's a quest skill, it is handled automatically by level requirements.
     // We exit early so the user cannot manually add points.
     const isQuest = skill.quest === true || skill.type === "quest";
@@ -296,6 +296,10 @@ function upgradeSkill(skillName) {
     skillPoints--; 
     
     updateSkillUI();
+
+    if (typeof updateStats === 'function') {
+        updateStats(); 
+    }
 }
 
 function decreaseSkill(skillName) {
@@ -317,6 +321,10 @@ function decreaseSkill(skillName) {
     playerSkills[skillName]--;
     skillPoints++;
     updateSkillUI();
+
+    if (typeof updateStats === 'function') {
+        updateStats();
+    }
 }
 
 function bindSkillTooltips() {

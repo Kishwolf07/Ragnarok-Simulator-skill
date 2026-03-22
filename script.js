@@ -4,7 +4,7 @@
 let currentJobTracked = "Novice";
 let lastJobLevel = 1;
 let skillPoints = 0;
-let playerSkills = {};
+window.playerSkills = {}; // Global object for skills.js to access
 
 // ===============================
 // CHARACTER IMAGE & GENDER
@@ -104,7 +104,7 @@ function getTotalCost(statValue) {
 // DATA TABLES
 // ===============================
 const jobBonuses = {
-    "Swordsman": { 1: [0, 0, 0, 0, 0, 0], 2: [1, 0, 0, 0, 0, 0], 6: [1, 0, 1, 0, 0, 0], 10: [1, 0, 1, 0, 1, 0], 14: [2, 0, 1, 0, 1, 0], 18: [2, 0, 2, 0, 1, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 0, 2, 1], 30: [2, 1, 2, 0, 2, 1], 33: [3, 1, 2, 0, 2, 1], 36: [3, 1, 2, 0, 3, 1], 38: [3,1,3,0,3,1], 40: [4, 1, 3, 0, 3, 1], 42: [4, 1, 4, 0, 3, 1], 44: [4, 1, 4, 0, 3, 2], 46: [4, 2, 4, 0, 3, 2], 47: [5, 2, 4, 0, 3, 2], 49: [6, 2, 4, 0, 3, 2], 50: [7, 2, 4, 0, 3, 2] },
+    "Swordsman": { 1: [0, 0, 0, 0, 0, 0], 2: [1, 0, 0, 0, 0, 0], 6: [1, 0, 1, 0, 0, 0], 10: [1, 0, 1, 0, 1, 0], 14: [2, 0, 1, 0, 1, 0], 18: [2, 0, 2, 0, 1, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 0, 2, 1], 30: [2, 1, 2, 0, 2, 1], 33: [3, 1, 2, 0, 2, 1], 36: [3, 1, 2, 0, 3, 1], 38: [3, 1, 3, 0, 3, 1], 40: [4, 1, 3, 0, 3, 1], 42: [4, 1, 4, 0, 3, 1], 44: [4, 1, 4, 0, 3, 2], 46: [4, 2, 4, 0, 3, 2], 47: [5, 2, 4, 0, 3, 2], 49: [6, 2, 4, 0, 3, 2], 50: [7, 2, 4, 0, 3, 2] },
     "Mage": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 1, 0, 0], 6: [0, 0, 0, 1, 1, 0], 10: [0, 0, 0, 1, 2, 0], 14: [0, 0, 0, 2, 2, 0], 18: [0, 1, 0, 2, 2, 0], 22: [0, 1, 0, 3, 2, 0], 26: [0, 2, 0, 3, 2, 0], 30: [0, 2, 0, 3, 2, 1], 33: [0, 2, 0, 4, 2, 1], 36: [0, 2, 0, 4, 3, 1], 38: [0, 2, 0, 5, 3, 1], 40: [0, 3, 0, 5, 3, 1], 42: [0, 3, 0, 5, 3, 2], 44: [0, 3, 0, 6, 3, 2], 46: [0, 3, 0, 7, 3, 2], 47: [0, 4, 0, 7, 3, 2], 49: [0, 4, 0, 7, 3, 3], 50: [0, 4, 0, 8, 3, 3] },
     "Archer": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 0, 0, 1, 0], 6: [1, 0, 0, 0, 1, 0], 10: [1, 0, 0, 1, 1, 0], 14: [1, 0, 0, 1, 2, 0], 18: [1, 0, 0, 1, 3, 0], 22: [1, 0, 0, 1, 3, 1], 26: [1, 1, 0, 1, 3, 1], 30: [1, 1, 0, 1, 4, 1], 33: [1, 2, 0, 1, 4, 1], 36: [1, 2, 0, 1, 5, 1], 38: [2, 2, 0, 1, 5, 1], 40: [3, 2, 0, 1, 5, 1], 42: [3, 2, 0, 1, 6, 1], 44: [3, 2, 0, 1, 6, 2], 46: [3, 2, 1, 1, 6, 2], 47: [3, 2, 1, 2, 6, 2], 49: [3, 3, 1, 2, 6, 2], 50: [3, 3, 1, 2, 7, 2] },
     "Merchant": { 1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 1, 0, 0, 0], 6: [0, 0, 1, 0, 1, 0], 10: [1, 0, 1, 0, 1, 0], 14: [1, 0, 1, 0, 2, 0], 18: [1, 0, 2, 0, 2, 0], 22: [2, 0, 2, 0, 2, 0], 26: [2, 0, 2, 1, 2, 0], 30: [2, 0, 3, 1, 2, 0], 33: [2, 1, 3, 1, 2, 0], 36: [2, 1, 3, 1, 2, 1], 38: [2, 1, 3, 1, 3, 1], 40: [3, 1, 3, 1, 3, 1], 42: [3, 1, 3, 1, 4, 1], 44: [4, 1, 3, 1, 4, 1], 46: [4, 1, 3, 1, 4, 2], 47: [4, 1, 4, 1, 4, 2], 49: [5, 1, 4, 1, 4, 2], 50: [5, 1, 4, 1, 5, 2] },
@@ -135,7 +135,7 @@ const jobWeaponBTBA = {
 const jobWeightModifier = { "Novice": 0, "Swordsman": 800, "Mage": 200, "Archer": 600, "Thief": 400, "Acolyte": 400, "Merchant": 800 };
 
 // ===============================
-// CORE CALCULATIONS
+// CORE CALCULATIONS (Skill-Aware)
 // ===============================
 function getBonusForJobLevel(job, level) {
     const classData = jobBonuses[job] || { 1: [0, 0, 0, 0, 0, 0] };
@@ -154,16 +154,27 @@ function calculateBaseHP(level, hpFactor, job) {
     return baseHP;
 }
 
-function calculateHPRegen(maxHP, vit, hprMod = 0) {
+function calculateHPRegen(maxHP, vit, job) {
     let hpPart = Math.floor(maxHP / 200);
     let vitPart = Math.floor(vit / 5);
     let hpr = hpPart + vitPart + 1;
-    return Math.floor(hpr * (1 + hprMod * 0.01));
+    
+    // Swordsman: Increase HP Recovery (Skill-aware)
+    if (window.playerSkills.increaseHP) {
+        const lvl = window.playerSkills.increaseHP;
+        hpr += (5 * lvl) + Math.floor(maxHP * 0.002 * lvl); 
+    }
+    return hpr;
 }
 
-function calculateSPRegen(maxSP, int) {
+function calculateSPRegen(maxSP, int, job) {
     let spr = 1 + Math.floor(maxSP / 100) + Math.floor(int / 6);
     if (int >= 120) spr += Math.floor(int / 2 - 56);
+    
+    // Mage: Increase SP Recovery (Skill-aware)
+    if (window.playerSkills.spRecovery) {
+        spr += (Math.floor(maxSP / 500) + 3) * window.playerSkills.spRecovery;
+    }
     return Math.floor(spr);
 }
 
@@ -208,26 +219,23 @@ function updateStats(changedStatId) {
     let job = document.getElementById("job").value;
     let jobInfo = jobData[job] || jobData["Novice"];
 
-    // 1. Job Level Limit Validation
+    // 1. Validation
     if (jobLevel > jobInfo.maxJob) {
         jobLevel = jobInfo.maxJob;
         jobLevelInput.value = jobInfo.maxJob;
     }
 
-    // 2. Handle Job Switch Logic
+    // 2. Handle Job Switch & Point Tracking
     if (job !== currentJobTracked) {
-        playerSkills = {};
-        skillPoints = 0;
-        lastJobLevel = jobLevel;
+        window.playerSkills = {}; 
         currentJobTracked = job;
+        updateWeaponOptions();
     }
 
-    if (jobLevel > lastJobLevel) {
-        skillPoints += (jobLevel - lastJobLevel);
-    } else if (jobLevel < lastJobLevel) {
-        skillPoints = 0; // Reset as per your structure
-    }
-    lastJobLevel = jobLevel;
+    // Dynamic Calculation of Skill Points
+    let totalJobPointsEarned = Math.max(0, jobLevel - 1);
+    let totalPointsSpent = Object.values(window.playerSkills).reduce((sum, val) => sum + val, 0);
+    skillPoints = totalJobPointsEarned - totalPointsSpent;
 
     // 3. Base Level Validation
     const baseLevelInput = document.getElementById("baseLevel");
@@ -235,7 +243,7 @@ function updateStats(changedStatId) {
     if (level > 99) { level = 99; baseLevelInput.value = 99; }
     else if (level < 1) { level = 1; baseLevelInput.value = 1; }
 
-    // 4. Raw Stats & Points Validation (Rollback)
+    // 4. Raw Stats & Costs
     let rawStats = {
         str: Math.max(1, parseInt(document.getElementById("str").value) || 1),
         agi: Math.max(1, parseInt(document.getElementById("agi").value) || 1),
@@ -246,39 +254,46 @@ function updateStats(changedStatId) {
     };
 
     let totalPoints = getTotalStatPoints(level);
-    let spentPoints = getTotalCost(rawStats.str) + getTotalCost(rawStats.agi) + getTotalCost(rawStats.vit) +
-                      getTotalCost(rawStats.int) + getTotalCost(rawStats.dex) + getTotalCost(rawStats.luk);
+    let spentPoints = Object.keys(rawStats).reduce((sum, key) => sum + getTotalCost(rawStats[key]), 0);
 
     if (changedStatId && spentPoints > totalPoints) {
         let el = document.getElementById(changedStatId);
         while (spentPoints > totalPoints && parseInt(el.value) > 1) {
             el.value = parseInt(el.value) - 1;
             rawStats[changedStatId] = parseInt(el.value);
-            spentPoints = getTotalCost(rawStats.str) + getTotalCost(rawStats.agi) + getTotalCost(rawStats.vit) +
-                          getTotalCost(rawStats.int) + getTotalCost(rawStats.dex) + getTotalCost(rawStats.luk);
+            spentPoints = Object.keys(rawStats).reduce((sum, key) => sum + getTotalCost(rawStats[key]), 0);
         }
     }
 
-    // 5. Bonuses & Effective Stats
+    // 5. Skill-Based Passive Stat Bonuses (Static Stat Increases)
+    let skillStatBonus = { str: 0, agi: 0, vit: 0, int: 0, dex: 0, luk: 0 };
+    
+    // Archer: Owl's Eye (+1 DEX per level)
+    if (window.playerSkills.owlsEye) {
+        skillStatBonus.dex += window.playerSkills.owlsEye;
+    }
+    // Merchant: Crazy Uproar (Quest: +4 STR)
+    if (window.playerSkills.crazyUproar) {
+        skillStatBonus.str += 4;
+    }
+
+    // 6. Final Effective Stats (Raw + Job Bonus + Skill Passive)
     const bonuses = getBonusForJobLevel(job, jobLevel);
-    const bonusIds = ["strBonus", "agiBonus", "vitBonus", "intBonus", "dexBonus", "lukBonus"];
-    bonusIds.forEach((id, index) => { document.getElementById(id).innerText = bonuses[index]; });
-
-    let stats = {
-        str: rawStats.str + bonuses[0],
-        agi: rawStats.agi + bonuses[1],
-        vit: rawStats.vit + bonuses[2],
-        int: rawStats.int + bonuses[3],
-        dex: rawStats.dex + bonuses[4],
-        luk: rawStats.luk + bonuses[5]
-    };
-
-    ['str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(key => { 
-        document.getElementById(key + "Req").innerText = getStatCost(rawStats[key]); 
+    const statKeys = ["str", "agi", "vit", "int", "dex", "luk"];
+    let stats = {};
+    statKeys.forEach((key, index) => {
+        const bonusVal = bonuses[index];
+        const skillVal = skillStatBonus[key];
+        document.getElementById(key + "Bonus").innerText = (bonusVal + skillVal);
+        stats[key] = rawStats[key] + bonusVal + skillVal;
+        document.getElementById(key + "Req").innerText = getStatCost(rawStats[key]);
     });
 
-    // 6. HP/SP Bars & Values (FIXED UI SYNC)
-    let weight = 2000 + (30 * stats.str) + (jobWeightModifier[job] || 0);
+    // 7. HP/SP/Weight
+    // Merchant: Enlarge Weight Limit (+200 Weight per level)
+    let weightBonus = (window.playerSkills.enlargeWeight) ? (window.playerSkills.enlargeWeight * 200) : 0;
+    let weight = 2000 + (30 * stats.str) + (jobWeightModifier[job] || 0) + weightBonus;
+    
     let baseHP = calculateBaseHP(level, jobInfo.hpFactor, job);   
     let maxHP = Math.floor(baseHP * (1 + stats.vit * 0.01));
     let maxSP = Math.floor((10 + (level * jobInfo.spFactor)) * (1 + stats.int * 0.01));
@@ -287,36 +302,67 @@ function updateStats(changedStatId) {
     document.getElementById("hpValue").innerText = maxHP;
     document.getElementById("spValue").innerText = maxSP;
 
-    // Visual Bar Updates
-    const hpPercent = Math.min((maxHP / 20000) * 100, 100);
-    const spPercent = Math.min((maxSP / 5000) * 100, 100);
-    
-    document.getElementById("hpBar").style.width = hpPercent + "%";
-    document.getElementById("hpText").innerText = Math.floor(hpPercent) + "%";    
-    document.getElementById("spBar").style.width = spPercent + "%";
-    document.getElementById("spText").innerText = Math.floor(spPercent) + "%";
+    // Regen logic (Passing window.playerSkills via global object access)
+    document.getElementById("hpRegen").innerText = calculateHPRegen(maxHP, stats.vit, job);
+    document.getElementById("spRegen").innerText = calculateSPRegen(maxSP, stats.int, job);
 
-    document.getElementById("hpRegen").innerText = calculateHPRegen(maxHP, stats.vit);
-    document.getElementById("spRegen").innerText = calculateSPRegen(maxSP, stats.int);
-    document.getElementById("statusPoints").innerText = Math.max(totalPoints - spentPoints, 0);
-
-    // 7. Status Information
+    // 8. Combat Calculations (ATK / MATK)
     let weapon = document.getElementById("weapon").value;
+    let skillAtkBonus = 0;
+
+    // Swordsman Masteries
+    if ((weapon === "One-handed Sword" || weapon === "Dagger") && window.playerSkills.swordMastery) {
+        skillAtkBonus += window.playerSkills.swordMastery * 4;
+    }
+    if (weapon === "Two-handed Sword" && window.playerSkills.twoHandedMastery) {
+        skillAtkBonus += window.playerSkills.twoHandedMastery * 4;
+    }
+    // Merchant: Overcharge (Classic gives +dmg based on level)
+    if (window.playerSkills.overcharge) {
+        skillAtkBonus += window.playerSkills.overcharge * 2; 
+    }
+
     let baseAtk = (weapon === "Bow")
         ? (stats.dex + Math.pow(Math.floor(stats.dex / 10), 2) + Math.floor(stats.str / 5) + Math.floor(stats.luk / 5))
         : (stats.str + Math.pow(Math.floor(stats.str / 10), 2) + Math.floor(stats.dex / 5) + Math.floor(stats.luk / 5));
     
-    document.getElementById("atk").innerText = baseAtk + " + 0";
+    document.getElementById("atk").innerText = `${baseAtk} + ${skillAtkBonus}`;
+    
     let matkMin = stats.int + Math.pow(Math.floor(stats.int / 7), 2);
     let matkMax = stats.int + Math.pow(Math.floor(stats.int / 5), 2);
-    document.getElementById("matk").innerText = matkMin + " ~ " + matkMax;
+    document.getElementById("matk").innerText = `${matkMin} ~ ${matkMax}`;
 
-    document.getElementById("def").innerText = "0 + " + stats.vit;
-    document.getElementById("mdef").innerText = "0 + " + stats.int;
-    document.getElementById("hit").innerText = level + stats.dex;
-    document.getElementById("flee").innerText = (level + stats.agi) + " + " + (Math.floor(stats.luk / 10) + 1);
+    // 9. Defense & Flee
+    // Acolyte: Divine Protection (+3 Hard DEF per level)
+    let skillHardDefBonus = (window.playerSkills.divineProtection) ? window.playerSkills.divineProtection * 3 : 0;
+    
+    // Acolyte: Angelus (+5% Soft DEF per level)
+    let angelusLvl = window.playerSkills.angelus || 0;
+    let angelusModifier = 1 + (angelusLvl * 0.05); 
+    let finalSoftDef = Math.floor(stats.vit * angelusModifier);
+
+    document.getElementById("def").innerText = `${skillHardDefBonus} + ${finalSoftDef}`;
+    
+    // Swordsman: Endure (+1 MDEF per level)
+    let skillMdefBonus = (window.playerSkills.endure) ? window.playerSkills.endure : 0;
+    document.getElementById("mdef").innerText = `${skillMdefBonus} + ${stats.int}`;
+    
+    // Thief: Improve Dodge (+3 Flee per level)
+    let skillFleeBonus = (window.playerSkills.improveDodge) ? (window.playerSkills.improveDodge * 3) : 0;
+    let totalFlee = (level + stats.agi + skillFleeBonus);
+    document.getElementById("flee").innerText = `${totalFlee} + ${Math.floor(stats.luk / 10) + 1}`;
+    
+    // Archer: Vulture's Eye (+1 Hit per level)
+    let skillHitBonus = (window.playerSkills.vulturesEye) ? window.playerSkills.vulturesEye : 0;
+    document.getElementById("hit").innerText = level + stats.dex + skillHitBonus;
+
     document.getElementById("critical").innerText = Math.floor(stats.luk * 0.3) + 1;
     document.getElementById("aspd").innerText = calculateASPD(job, weapon, stats.agi, stats.dex);
+
+    // Final UI Refresh
+    document.getElementById("statusPoints").innerText = Math.max(totalPoints - spentPoints, 0);
+    const spDisplay = document.getElementById("skillPointsValue") || document.querySelector(".sp-value");
+    if (spDisplay) spDisplay.innerText = skillPoints;
 
     if (document.getElementById('skillsPanel').classList.contains('active') && typeof updateSkillUI === 'function') {
         updateSkillUI();
@@ -328,6 +374,7 @@ function resetCharacter() {
     document.getElementById("jobLevel").value = 1;
     document.getElementById("job").value = "Novice";
     ["str", "agi", "vit", "int", "dex", "luk"].forEach(s => document.getElementById(s).value = 1);
+    window.playerSkills = {};
     updateWeaponOptions();
     updateCharacterImage();
     updateStats();

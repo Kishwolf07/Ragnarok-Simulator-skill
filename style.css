@@ -347,6 +347,8 @@ body::after {
     animation: shimmer 2s infinite;
 }
 
+
+
 .hp-fill {
     background: linear-gradient(90deg, #8b0000, #ff0000);
 }
