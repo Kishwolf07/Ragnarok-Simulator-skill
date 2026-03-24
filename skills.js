@@ -120,6 +120,27 @@ function formatSkillIcon(name) {
     return name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
 }
 
+function getMissingPoints(skillName, job) {
+    const skill = jobSkills[job][skillName];
+    if (!skill || !skill.req) return 0;
+
+    let totalPointsNeeded = 0;
+
+    for (const [reqSkillName, reqLevel] of Object.entries(skill.req)) {
+        const currentLevel = playerSkills[reqSkillName] || 0;
+        
+        if (currentLevel < reqLevel) {
+            // 1. Calculate points needed for this specific parent
+            const diff = reqLevel - currentLevel;
+            totalPointsNeeded += diff;
+
+            // 2. RECURSION: Check if this parent also has missing parents
+            totalPointsNeeded += getMissingPoints(reqSkillName, job);
+        }
+    }
+    return totalPointsNeeded;
+}
+
 function handleSkillLevelChange() {
     const jobLvlInput = document.getElementById("jobLevel"); 
     const baseLvlInput = document.getElementById("baseLevel");
@@ -277,26 +298,46 @@ function upgradeSkill(skillName) {
     const skill = jobSkills[job][skillName];
     if (!skill) return;
 
-    // If it's a quest skill, it is handled automatically by level requirements.
-    // We exit early so the user cannot manually add points.
-    const isQuest = skill.quest === true || skill.type === "quest";
-    if (isQuest) return; 
+    // Skip Quest Skills (they don't use points)
+    if (skill.quest === true || skill.type === "quest") return; 
 
     const currentLevel = playerSkills[skillName] || 0;
-    const state = getSkillState(skillName);
-    
-    // Check if locked or already at max level
-    if (state === "locked" || currentLevel >= skill.maxLevel) return;
+    if (currentLevel >= skill.maxLevel) return;
 
-    // Ensure user has enough skill points for normal skills
-    if (skillPoints <= 0) return; 
+    // 1. Calculate Total Cost (Target + all Ancestors)
+    const pointsNeededForParents = getMissingPoints(skillName, job);
+    const totalCost = 1 + pointsNeededForParents;
 
-    // Upgrade the skill and consume a point
-    playerSkills[skillName]++;
+    // 2. Check if we can afford the whole "Package"
+    if (skillPoints < totalCost) {
+        console.warn("Insufficient points for advance upgrade chain.");
+        return;
+    }
+
+    // 3. Helper to apply levels recursively
+    const applyRequirements = (name) => {
+        const s = jobSkills[job][name];
+        if (s && s.req) {
+            for (const [reqName, reqLvl] of Object.entries(s.req)) {
+                // First, ensure the requirement's own requirements are met
+                applyRequirements(reqName);
+                
+                // Then, bring the requirement up to the needed level
+                while ((playerSkills[reqName] || 0) < reqLvl) {
+                    playerSkills[reqName] = (playerSkills[reqName] || 0) + 1;
+                    skillPoints--;
+                }
+            }
+        }
+    };
+
+    // 4. Execute the upgrade chain
+    applyRequirements(skillName); // Fix the parents
+    playerSkills[skillName]++;    // Upgrade the target
     skillPoints--; 
     
+    // 5.   Refresh UI and Stats
     updateSkillUI();
-
     if (typeof updateStats === 'function') {
         updateStats(); 
     }
