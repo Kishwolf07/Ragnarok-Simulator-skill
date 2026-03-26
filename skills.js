@@ -1,100 +1,106 @@
 // ===============================
 // SKILL TREE DATA and code
 // ===============================
+
+let currentJobLevel = 1;
+window.skillPoints = 0;
+window.playerSkills = {};
+
 // skills each job
 const jobSkills = {
     "Novice": {
-        basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal", desc: "A simple beginner skill." },
-        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Recover small HP instantly.", quest: true, reqBase: 4 },
-        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to be dead to avoid attacks.", quest: true, reqBase: 4 }
+        basicSkill: { name: "Basic Skill", maxLevel: 9, type: "normal", desc: "Enables the use of Basic Interface Skills such as Trading, Kafra use and Chatroom and Party creation." },
+        firstAid: { name: "First Aid", maxLevel: 1, type: "quest", desc: "Consume 3 SP to restore 5 HP.", quest: true, reqBase: 4 },
+        playDead: { name: "Play Dead", maxLevel: 1, type: "quest", desc: "Pretend to fall dead on the ground, becoming immune from all attacks from Players and monsters.", quest: true, reqBase: 4 }
     },
     "Swordsman": {
-        swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage with swords." },
-        twoHandedMastery: { name: "Two-Handed Sword Mastery", maxLevel: 10, type: "normal", desc: "Increase damage when using two-handed swords.", req: { swordMastery: 1 } },
-        bash: { name: "Bash", maxLevel: 10, type: "normal", desc: "Deal physical damage to a single enemy." },
-        magnumBreak: { name: "Magnum Break", maxLevel: 10, type: "normal", desc: "Attack all enemies nearby.", req: { bash: 5 } },
-        provoke: { name: "Provoke", maxLevel: 10, type: "normal", desc: "Taunt enemy to attack you." },
-        endure: { name: "Endure", maxLevel: 10, type: "normal", desc: "Reduce incoming damage temporarily.", req: { provoke: 5 } },
-        increaseHP: { name: "Increase HP Recovery", maxLevel: 10, type: "normal", desc: "Boost natural HP regeneration." },
-        berserk: { name: "Berserk", maxLevel: 1, type: "quest", desc: "Boost attack power.", quest: true, reqJob: 30 },
-        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest", desc: "Powerful strike.", quest: true, reqJob: 30 },
-        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest", desc: "Regen while walking.", quest: true, reqJob: 35 }
+        swordMastery: { name: "Sword Mastery", maxLevel: 10, type: "normal", desc: "Increases damage done with One-Handed Swords." },
+        twoHandedMastery: { name: "Two-Handed Sword Mastery", maxLevel: 10, type: "normal", desc: "Increases damage done with Two-Handed Swords.", req: { swordMastery: 1 } },
+        bash: { name: "Bash", maxLevel: 10, type: "normal", desc: "Bash is a skill that increases ATK and Accuracy. It also has a chance to stun opponents once the quest skill Fatal Blow is obtained." },
+        magnumBreak: { name: "Magnum Break", maxLevel: 10, type: "normal", desc: "Magnum Break is an instant fire-element AoE skill that consumes 30 SP and a small amount of HP. It damages enemies in a 5×5 area, knocks them back 2 cells, and increases the user’s ATK and accuracy. After casting, it also grants a 10-second buff that boosts Fire-property attack damage by 20%.", req: { bash: 5 } },
+        provoke: { name: "Provoke", maxLevel: 10, type: "normal", desc: "Increase a target's attack by up to 32% and decrease its defense by up to 55%." },
+        endure: { name: "Endure", maxLevel: 10, type: "normal", desc: "Disables Fliching Status for up to 7 Hits and up to 37 seconds. Also grants 10 bonus Mdef with casted.", req: { provoke: 5 } },
+        increaseHP: { name: "Increase HP Recovery", maxLevel: 10, type: "normal", desc: "The backbone of the Swordman classes. For every 10 seconds that elapse while a character remains on the same tile without manually moving themselves away from it, a certain amount of HP dependent on the skill level and the character's Max HP will be restored. " },
+        berserk: { name: "Berserk", maxLevel: 1, type: "quest", desc: "Increases attack, but decreases Defense as per Provoke level 10 when HP drops below 25%.", quest: true, reqJob: 30 },
+        fatalBlow: { name: "Fatal Blow", maxLevel: 1, type: "quest", desc: "Adds a chance to stun targets hit with Bash level 6 and up.", quest: true, reqJob: 30 },
+        movingHP: { name: "HP Recovery While Moving", maxLevel: 1, type: "quest", desc: "Allows HP recovery while walking.", quest: true, reqJob: 35 }
     },
     "Mage": {
-        spRecovery: { name: "Increase SP Recovery", maxLevel: 10, type: "normal", desc: "Boost natural SP regeneration." },
-        fireBolt: { name: "Fire Bolt", maxLevel: 10, type: "normal", desc: "Quick fire projectile spell." },
-        fireBall: { name: "Fire Ball", maxLevel: 10, type: "normal", desc: "Fire magic to hit a single enemy.", req: { fireBolt: 4 } },
-        fireWall: { name: "Fire Wall", maxLevel: 10, type: "normal", desc: "Summon a wall of fire.", req: { fireBall: 5, sight: 1 } },
-        sight: { name: "Sight", maxLevel: 1, type: "normal", desc: "Detect hidden enemies.", req: { fireBolt: 1 } },
-        coldBolt: { name: "Cold Bolt", maxLevel: 10, type: "normal", desc: "Ice attack." },
-        frostDiver: { name: "Frost Diver", maxLevel: 10, type: "normal", desc: "Ice AoE damage.", req: { coldBolt: 5 } },
-        lightningBolt: { name: "Lightning Bolt", maxLevel: 10, type: "normal", desc: "Deal electric damage." },
-        thunderstorm: { name: "Thunderstorm", maxLevel: 10, type: "normal", desc: "Electric AoE damage.", req: { lightningBolt: 4 } },
-        napalmBeat: { name: "Napalm Beat", maxLevel: 10, type: "normal", desc: "Area fire attack." },
-        soulStrike: { name: "Soul Strike", maxLevel: 10, type: "normal", desc: "Magic attack ignores defense.", req: { napalmBeat: 4 } },
-        safetyWall: { name: "Safety Wall", maxLevel: 10, type: "normal", desc: "Block melee attacks.", req: { soulStrike: 5 } },
-        stoneCurse: { name: "Stone Curse", maxLevel: 10, type: "normal", desc: "Petrify a single enemy.", req: { napalmBeat: 1 } },
-        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest", desc: "Boost defense.", quest: true, reqJob: 35 }
+        spRecovery: { name: "Increase SP Recovery", maxLevel: 10, type: "normal", desc: "Passively increases SP recovery speed when not moving. Also increases efficiency of SP-restoring items consumed and thrown by an Alchemist." },
+        fireBolt: { name: "Fire Bolt", maxLevel: 10, type: "normal", desc: "Attack a single target with up to 10× MATK Fire-element damage." },
+        fireBall: { name: "Fire Ball", maxLevel: 10, type: "normal", desc: "Attack a target and enemies in a 5×5 area around it for up to 170% Fire-element damage.", req: { fireBolt: 4 } },
+        fireWall: { name: "Fire Wall", maxLevel: 10, type: "normal", desc: "Put up a small fire wall that causes 50% Fire-element damage to enemies passing through and pushes them back.", req: { fireBall: 5, sight: 1 } },
+        sight: { name: "Sight", maxLevel: 1, type: "normal", desc: "Reveal hidden enemies in a 7×7 area around the user.", req: { fireBolt: 1 } },
+        coldBolt: { name: "Cold Bolt", maxLevel: 10, type: "normal", desc: "Attack a single target with up to 10× MATK Water-element damage." },
+        frostDiver: { name: "Frost Diver", maxLevel: 10, type: "normal", desc: "Attack a target for up to 200% Water-element damage with a chance to freeze it, rendering it immobile and turning it to Water 1 element.", req: { coldBolt: 5 } },
+        lightningBolt: { name: "Lightning Bolt", maxLevel: 10, type: "normal", desc: "Attack a single target with up to 10× MATK Wind-element damage." },
+        thunderstorm: { name: "Thunderstorm", maxLevel: 10, type: "normal", desc: "Wind-element AoE attack dealing up to 8× MATK damage to targets in a 5*5 area.", req: { lightningBolt: 4 } },
+        napalmBeat: { name: "Napalm Beat", maxLevel: 10, type: "normal", desc: "Deal up to 170% MATK Ghost-element damage to target and all enemies in a 3×3 area around it." },
+        soulStrike: { name: "Soul Strike", maxLevel: 10, type: "normal", desc: "Ghost-element attack dealing up to 5× MATK damage to a single target. Does additional damage to Undead-element enemies.", req: { napalmBeat: 4 } },
+        safetyWall: { name: "Safety Wall", maxLevel: 10, type: "normal", desc: "Use a Blue Gemstone to create a pillar on a cell that protects whoever stands in it from melee attacks.", req: { soulStrike: 5 } },
+        stoneCurse: { name: "Stone Curse", maxLevel: 10, type: "normal", desc: "Attempt to turn target into stone, rendering it immobile and turning it to Earth 1 element.", req: { napalmBeat: 1 } },
+        energyCoat: { name: "Energy Coat", maxLevel: 1, type: "quest", desc: "Reduces damage from incoming physical attacks while consuming SP.", quest: true, reqJob: 35 }
     },
     "Archer": {
-        owlsEye: { name: "Owl's Eye", maxLevel: 10, type: "normal", desc: "Increase ranged attack range." },
-        vulturesEye: { name: "Vulture's Eye", maxLevel: 10, type: "normal", desc: "Increase accuracy.", req: { owlsEye: 3 } },
-        improveConcentration: { name: "Improve Concentration", maxLevel: 10, type: "normal", desc: "Increase critical rate.", req: { vulturesEye: 1 } },
-        doubleStrafe: { name: "Double Strafe", maxLevel: 10, type: "normal", desc: "Shoot two arrows." },
-        arrowShower: { name: "Arrow Shower", maxLevel: 10, type: "normal", desc: "Shoot multiple arrows.", req: { doubleStrafe: 5 } },
-        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest", desc: "Create custom arrows.", quest: true, reqJob: 30 },
-        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest", desc: "Knock back enemies.", quest: true, reqJob: 35 }
+        owlsEye: { name: "Owl's Eye", maxLevel: 10, type: "normal", desc: "Increases DEX by up to 10." },
+        vulturesEye: { name: "Vulture's Eye", maxLevel: 10, type: "normal", desc: "Increases range and HIT when using bows.", req: { owlsEye: 3 } },
+        improveConcentration: { name: "Improve Concentration", maxLevel: 10, type: "normal", desc: "Increase DEX and AGI by up to 12% for a duration. Uncovers hidden enemies in a 3*3 area when activated.", req: { vulturesEye: 1 } },
+        doubleStrafe: { name: "Double Strafe", maxLevel: 10, type: "normal", desc: "Deal up to 380% damage to a single target." },
+        arrowShower: { name: "Arrow Shower", maxLevel: 10, type: "normal", desc: "Deal up to 125% damage to targets in a 5*5 area around target.", req: { doubleStrafe: 5 } },
+        arrowCrafting: { name: "Arrow Crafting", maxLevel: 1, type: "quest", desc: "Create arrows from various items.", quest: true, reqJob: 30 },
+        arrowRepel: { name: "Arrow Repel", maxLevel: 1, type: "quest", desc: "Shoot a target to inflict 150% damage and push it back 6 cells.", quest: true, reqJob: 35 }
     },
     "Merchant": {
-        enlargeWeight: { name: "Enlarge Weight Limit", maxLevel: 10, type: "normal", desc: "Carry more items." },
-        discount: { name: "Discount", maxLevel: 10, type: "normal", desc: "Reduce shop prices.", req: { enlargeWeight: 3 } },
-        overcharge: { name: "Overcharge", maxLevel: 10, type: "normal", desc: "Increase weapon damage.", req: { discount: 3 } },
-        pushcart: { name: "Pushcart", maxLevel: 10, type: "normal", desc: "Move your cart faster.", req: { enlargeWeight: 5 } },
-        vending: { name: "Vending", maxLevel: 10, type: "normal", desc: "Sell items.", req: { pushcart: 3 } },
-        mammonite: { name: "Mammonite", maxLevel: 10, type: "normal", desc: "Deal earth damage." },
-        itemAppraisal: { name: "Item Appraisal", maxLevel: 1, type: "normal", desc: "Identify unknown items." },
-        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest", desc: "Spin your cart.", quest: true, reqJob: 35 },
-        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest", desc: "Switch cart style.", quest: true, reqJob: 30 },
-        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest", desc: "Confuse enemies.", quest: true, reqJob: 15 }
+        enlargeWeight: { name: "Enlarge Weight Limit", maxLevel: 10, type: "normal", desc: "Increase your character's maximum Weight Limit by up to 2000 points." },
+        discount: { name: "Discount", maxLevel: 10, type: "normal", desc: "Buy items from NPC's with an up to 24% discount.", req: { enlargeWeight: 3 } },
+        overcharge: { name: "Overcharge", maxLevel: 10, type: "normal", desc: "Get up to 24% more Zeny from selling items to NPC's.", req: { discount: 3 } },
+        pushcart: { name: "Pushcart", maxLevel: 10, type: "normal", desc: "Carry an additional 8000 weight units and/or 100 items in a separate inventory.", req: { enlargeWeight: 5 } },
+        vending: { name: "Vending", maxLevel: 10, type: "normal", desc: "Open a shop with up to 12 item stacks for other players to buy.", req: { pushcart: 3 } },
+        mammonite: { name: "Mammonite", maxLevel: 10, type: "normal", desc: "Powerful melee attack dealing up to 600% damage that costs up to 1000 Zeny." },
+        itemAppraisal: { name: "Item Appraisal", maxLevel: 1, type: "normal", desc: "Identify items without a magnifier." },
+        cartRevolution: { name: "Cart Revolution", maxLevel: 1, type: "quest", desc: "Melee AoE attack that gets stronger as your cart gets heavier.", quest: true, reqJob: 35 },
+        changeCart: { name: "Change Cart", maxLevel: 1, type: "quest", desc: "Change your cart's appearance as you gain levels.", quest: true, reqJob: 30 },
+        crazyUproar: { name: "Crazy Uproar", maxLevel: 1, type: "quest", desc: "A self-buff that grants +4 Strength.", quest: true, reqJob: 15 }
     },
     "Thief": {
-        doubleAttack: { name: "Double Attack", maxLevel: 10, type: "normal", desc: "Attack twice." },
-        improveDodge: { name: "Improve Dodge", maxLevel: 10, type: "normal", desc: "Increase dodge chance." },
-        steal: { name: "Steal", maxLevel: 10, type: "normal", desc: "Steal items." },
-        hiding: { name: "Hiding", maxLevel: 10, type: "normal", desc: "Hide from enemies.", req: { steal: 5 } },
-        envenom: { name: "Envenom", maxLevel: 10, type: "normal", desc: "Add poison effect." },
-        detoxify: { name: "Detoxify", maxLevel: 1, type: "normal", desc: "Remove poison.", req: { envenom: 3 } },
-        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest", desc: "Move behind enemy.", quest: true, reqJob: 35 },
-        findStone: { name: "Find Stone", maxLevel: 1, type: "quest", desc: "Locate items.", quest: true, reqJob: 20 },
-        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest", desc: "Blind enemies.", quest: true, reqJob: 25 },
-        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw stones.", quest: true, reqJob: 15}
+        doubleAttack: { name: "Double Attack", maxLevel: 10, type: "normal", desc: "Adds a high chance to deal double damage when attacking with a dagger." },
+        improveDodge: { name: "Improve Dodge", maxLevel: 10, type: "normal", desc: "Adds up to 30 Flee. Bonus increases when you become a Rogue or Assassin. Also increases Movement Speed if you're an Assassin." },
+        steal: { name: "Steal", maxLevel: 10, type: "normal", desc: "Steal items from monsters. Affected monster may still drop the stolen item normally." },
+        hiding: { name: "Hiding", maxLevel: 10, type: "normal", desc: "Hide to protect yourself. Does not work against Boss, Insect and Demon monsters, counterable by some AoE skills and items.", req: { steal: 5 } },
+        envenom: { name: "Envenom", maxLevel: 10, type: "normal", desc: "Poison-element melee attack that deals up to 150 additional damage and has a chance of poisoning its target." },
+        detoxify: { name: "Detoxify", maxLevel: 1, type: "normal", desc: "Cures yourself or a target from being poisoned.", req: { envenom: 3 } },
+        backSlide: { name: "Back Slide", maxLevel: 1, type: "quest", desc: "Instantly move back 5 cells.", quest: true, reqJob: 35 },
+        findStone: { name: "Find Stone", maxLevel: 1, type: "quest", desc: "Provide ammunition for Stone Fling or other creative uses.", quest: true, reqJob: 20 },
+        sandAttack: { name: "Sand Attack", maxLevel: 1, type: "quest", desc: "Earth-element attack dealing 125% damage with a 15% chance of blinding its target.", quest: true, reqJob: 25 },
+        stoneFling: { name: "Stone Fling", maxLevel: 1, type: "quest", desc: "Throw a stone at a target for 50 neutral-element, armor-ignoring damage. Has a 5% chance to blind and/or stun its target.", quest: true, reqJob: 15}
     },
     "Acolyte": {
-        divineProtection: { name: "Divine Protection", maxLevel: 10, type: "normal", desc: "Reduce damage." },
-        demonBane: { name: "Demon Bane", maxLevel: 10, type: "normal", desc: "Damage demon-type.", req: { divineProtection: 3 } },
-        ruwach: { name: "Ruwach", maxLevel: 1, type: "normal", desc: "Remove curse." },
-        teleport: { name: "Teleport", maxLevel: 2, type: "normal", desc: "Instantly move.", req: { ruwach: 1 } },
-        warpPortal: { name: "Warp Portal", maxLevel: 4, type: "normal", desc: "Create a portal.", req: { teleport: 2 } },
-        pneuma: { name: "Pneuma", maxLevel: 1, type: "normal", desc: "Remove fear.", req: { warpPortal: 4 } },
-        heal: { name: "Heal", maxLevel: 10, type: "normal", desc: "Restore HP." },
-        cure: { name: "Cure", maxLevel: 1, type: "normal", desc: "Heal minor wounds.", req: { heal: 2 } },
-        increaseAgi: { name: "Increase AGI", maxLevel: 10, type: "normal", desc: "Increase AGI.", req: { heal: 3 } },
-        decreaseAgi: { name: "Decrease AGI", maxLevel: 10, type: "normal", desc: "Lower enemy AGI.", req: { increaseAgi: 1 } },
-        angelus: { name: "Angelus", maxLevel: 10, type: "normal", desc: "Increase party defense.", req: { divineProtection: 3 } },
-        signumCrusis: { name: "Signum Crusis", maxLevel: 10, type: "normal", desc: "Holy attack.", req: { demonBane: 3 } },
-        aquaBenedicta: { name: "Aqua Benedicta", maxLevel: 1, type: "normal", desc: "Holy water effect." },
-        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest", desc: "Holy magic attack.", quest: true, reqJob: 30 }
+        divineProtection: { name: "Divine Protection", maxLevel: 10, type: "normal", desc: "Increases VIT defense against Demons and Undead monsters by 3~30." },
+        demonBane: { name: "Demon Bane", maxLevel: 10, type: "normal", desc: "Increases attack against against Demons and Undead monsters by 3~30.", req: { divineProtection: 3 } },
+        ruwach: { name: "Ruwach", maxLevel: 1, type: "normal", desc: "Reveal hidden enemies in a 5×5 area around the user and deal 145% MATK damage to them." },
+        teleport: { name: "Teleport", maxLevel: 2, type: "normal", desc: "Instantly move to a random spot on the map or the user's save spot. Does not work in PvP environments.", req: { ruwach: 1 } },
+        warpPortal: { name: "Warp Portal", maxLevel: 4, type: "normal", desc: "Use a Blue Gemstone to open a portal to the user's save spot or an area memorized earlier for up to 8 players to pass through. (0~3 memo points, 10~25 seconds)", req: { teleport: 2 } },
+        pneuma: { name: "Pneuma", maxLevel: 1, type: "normal", desc: "Protects a 3×3 area from incoming ranged attacks.", req: { warpPortal: 4 } },
+        heal: { name: "Heal", maxLevel: 10, type: "normal", desc: "Restore a target's HP, or damage Undead targets. (Base factor 12~84)" },
+        cure: { name: "Cure", maxLevel: 1, type: "normal", desc: "Cures a target from Silence, Blind and Chaos statuses.", req: { heal: 2 } },
+        increaseAgi: { name: "Increase AGI", maxLevel: 10, type: "normal", desc: "For 60~240 seconds, increase target's AGI by 3~12.", req: { heal: 3 } },
+        decreaseAgi: { name: "Decrease AGI", maxLevel: 10, type: "normal", desc: "Attempts to lower a target's AGI by 3~12 with 42~60% chance of success. (30~120 seconds vs. monsters, 20~65 seconds vs. players)", req: { increaseAgi: 1 } },
+        angelus: { name: "Angelus", maxLevel: 10, type: "normal", desc: "Increase VIT DEF of the user and all party members nearby for 5~50% for 30~300 seconds.", req: { divineProtection: 3 } },
+        signumCrusis: { name: "Signum Crusis", maxLevel: 10, type: "normal", desc: "Decrease Undead-element and Demon monsters' DEF by 14~50% in a wide radius around the user, with 27~63% success chance.", req: { demonBane: 3 } },
+        aquaBenedicta: { name: "Aqua Benedicta", maxLevel: 1, type: "normal", desc: "Create 1 Holy Water while standing in shallow water. Each use consumes an Empty Bottle." },
+        blessing: {name: "Blessing", maxLevel: 10, type: "normal", desc: "For 60~240 seconds, increase a target's STR, DEX and INT by 1~10. When used on Undead or Demons, reduces their DEX and INT by 50%.", req: { divineProtection: 5 }},
+        holyLight: { name: "Holy Light", maxLevel: 1, type: "quest", desc: "Holy-element attack that deals 125% MATK damage to a single target. Cancels Kyrie Eleison on target.", quest: true, reqJob: 30 }
     }
 };
 
 const skillConnections = {
     "Novice": [["basicSkill", "firstAid"], ["basicSkill", "playDead"]],
     "Swordsman": [["swordMastery", "twoHandedMastery"], ["bash", "magnumBreak"], ["provoke", "endure"]],
-    "Mage": [["napalmBeat", "soulStrike"], ["soulStrike", "safetyWall"], ["sight", "fireWall"], ["fireBolt", "fireBall"], ["fireBall", "fireWall"], ["coldBolt", "frostDiver"], ["lightningBolt", "thunderstorm"]],
+    "Mage": [["napalmBeat", "soulStrike"], ["soulStrike", "safetyWall"], ["sight", "fireWall"], ["fireBolt", "fireBall"], ["fireBall", "fireWall"], ["coldBolt", "frostDiver"], ["lightningBolt", "thunderstorm"],["napalmBeat", "stoneCurse"]],
     "Archer": [["owlsEye", "vulturesEye"], ["vulturesEye", "improveConcentration"], ["doubleStrafe", "arrowShower"]],
     "Merchant": [["enlargeWeight", "discount"], ["enlargeWeight", "pushcart"], ["discount", "overcharge"], ["pushcart", "vending"]],
     "Thief": [["steal", "hiding"], ["envenom", "detoxify"]],
-    "Acolyte": [["divineProtection", "demonBane"], ["divineProtection", "angelus"], ["demonBane", "signumCrusis"], ["heal", "cure"], ["heal", "increaseAgi"], ["increaseAgi", "decreaseAgi"], ["ruwach", "teleport"], ["teleport", "warpPortal"], ["warpPortal", "pneuma"]]
+    "Acolyte": [["divineProtection", "demonBane"], ["divineProtection", "angelus"], ["demonBane", "signumCrusis"], ["heal", "cure"], ["heal", "increaseAgi"], ["increaseAgi", "decreaseAgi"], ["ruwach", "teleport"], ["teleport", "warpPortal"], ["warpPortal", "pneuma"], ["divineProtection", "blessing"]]
 };
 
 const skillTreeLayout = {
@@ -104,7 +110,7 @@ const skillTreeLayout = {
     "Archer": { owlsEye: { x: 50, y: 20 }, vulturesEye: { x: 50, y: 80 }, improveConcentration: { x: 50, y: 140 }, doubleStrafe: { x: 35, y: 200 }, arrowShower: { x: 65, y: 200 }, arrowCrafting: { x: 35, y: 260 }, arrowRepel: { x: 65, y: 260 } },
     "Merchant": { enlargeWeight: { x: 50, y: 20 }, discount: { x: 30, y: 70 }, pushcart: { x: 70, y: 70 }, overcharge: { x: 30, y: 130 }, vending: { x: 70, y: 130 }, mammonite: { x: 30, y: 190 }, itemAppraisal: { x: 70, y: 190 }, cartRevolution: { x: 30, y: 250 }, changeCart: { x: 50, y: 250 }, crazyUproar: { x: 70, y: 250 } },
     "Thief": { steal: { x: 50, y: 20 }, hiding: { x: 50, y: 80 }, envenom: { x: 30, y: 20 }, detoxify: { x: 30, y: 80 }, doubleAttack: { x: 70, y: 20 }, improveDodge: { x: 70, y: 80 }, backSlide: { x: 20, y: 140 }, findStone: { x: 40, y: 140 }, sandAttack: { x: 60, y: 140 }, stoneFling: { x: 80, y: 140 } },
-    "Acolyte": { heal: { x: 50, y: 20 }, cure: { x: 30, y: 70 }, increaseAgi: { x: 70, y: 70 }, decreaseAgi: { x: 70, y: 130 }, divineProtection: { x: 50, y: 130 }, angelus: { x: 30, y: 130 }, demonBane: { x: 70, y: 190 }, signumCrusis: { x: 70, y: 250 }, ruwach: { x: 30, y: 190 }, teleport: { x: 30, y: 250 }, warpPortal: { x: 30, y: 310 }, pneuma: { x: 30, y: 370 }, aquaBenedicta: { x: 70, y: 310 }, holyLight: { x: 70, y: 370 } }
+    "Acolyte": { heal: { x: 50, y: 20 }, cure: { x: 30, y: 70 }, increaseAgi: { x: 70, y: 70 }, decreaseAgi: { x: 70, y: 130 }, blessing: { x: 50, y: 190 }, divineProtection: { x: 50, y: 130 }, angelus: { x: 30, y: 130 }, demonBane: { x: 70, y: 190 }, signumCrusis: { x: 70, y: 250 }, ruwach: { x: 30, y: 190 }, teleport: { x: 30, y: 250 }, warpPortal: { x: 30, y: 310 }, pneuma: { x: 30, y: 370 }, aquaBenedicta: { x: 70, y: 310 }, holyLight: { x: 70, y: 370 } }
 };
 
 const skillTypes = {
@@ -113,7 +119,7 @@ const skillTypes = {
     "Mage": { fireBolt: "Offensive", fireBall: "Offensive", fireWall: "Offensive", sight: "Active", coldBolt: "Offensive", frostDiver: "Offensive", lightningBolt: "Offensive", thunderstorm: "Offensive", napalmBeat: "Offensive", soulStrike: "Offensive", safetyWall: "Supportive", stoneCurse: "Active", spRecovery: "Passive", energyCoat: "Supportive" },
     "Archer": { owlsEye: "Passive", vulturesEye: "Passive", improveConcentration: "Supportive", doubleStrafe: "Offensive", arrowShower: "Offensive", arrowCrafting: "Active", arrowRepel: "Offensive" },    "Merchant": { enlargeWeight: "Passive", discount: "Passive", pushcart: "Passive", overcharge: "Passive", vending: "Active", mammonite: "Offensive", itemAppraisal: "Active", cartRevolution: "Offensive", changeCart: "Active", crazyUproar: "Supportive" },
     "Thief": { steal: "Active", hiding: "Active", envenom: "Offensive", detoxify: "Supportive", doubleAttack: "Passive", improveDodge: "Passive", backSlide: "Active", findStone: "Active", sandAttack: "Offensive", stoneFling: "Offensive" },
-    "Acolyte": { heal: "Supportive", cure: "Supportive", increaseAgi: "Supportive", decreaseAgi: "Active", divineProtection: "Passive", angelus: "Supportive", demonBane: "Passive", signumCrusis: "Supportive", ruwach: "Offensive", teleport: "Supportive", warpPortal: "Supportive", pneuma: "Supportive", aquaBenedicta: "Active", holyLight: "Offensive" }
+    "Acolyte": { heal: "Supportive", cure: "Supportive", increaseAgi: "Supportive", decreaseAgi: "Active", blessing: "Supportive", divineProtection: "Passive", angelus: "Supportive", demonBane: "Passive", signumCrusis: "Supportive", ruwach: "Offensive", teleport: "Supportive", warpPortal: "Supportive", pneuma: "Supportive", aquaBenedicta: "Active", holyLight: "Offensive" }
 };
 
 function formatSkillIcon(name) {
@@ -121,64 +127,91 @@ function formatSkillIcon(name) {
 }
 
 function getMissingPoints(skillName, job) {
+    let extra = 0;
     const skill = jobSkills[job][skillName];
-    if (!skill || !skill.req) return 0;
 
-    let totalPointsNeeded = 0;
+    if (skill && skill.req) {
+        for (const [reqName, reqLvl] of Object.entries(skill.req)) {
+            if (jobSkills[job][reqName].quest) continue;
 
-    for (const [reqSkillName, reqLevel] of Object.entries(skill.req)) {
-        const currentLevel = playerSkills[reqSkillName] || 0;
-        
-        if (currentLevel < reqLevel) {
-            // 1. Calculate points needed for this specific parent
-            const diff = reqLevel - currentLevel;
-            totalPointsNeeded += diff;
+            const current = window.playerSkills[reqName] || 0;
 
-            // 2. RECURSION: Check if this parent also has missing parents
-            totalPointsNeeded += getMissingPoints(reqSkillName, job);
+            if (current < reqLvl) {
+                extra += (reqLvl - current) + getMissingPoints(reqName, job);
+            }
         }
     }
-    return totalPointsNeeded;
+    return extra;
 }
 
+//handle skil level change
 function handleSkillLevelChange() {
     const jobLvlInput = document.getElementById("jobLevel"); 
     const baseLvlInput = document.getElementById("baseLevel");
     const currentJob = document.getElementById("job").value;
+
     if (!jobLvlInput) return;
 
     currentJobLevel = parseInt(jobLvlInput.value) || 1;
     const currentBaseLevel = parseInt(baseLvlInput?.value) || 1;
-    
+
     const skills = jobSkills[currentJob];
+
     if (skills) {
         Object.keys(skills).forEach(key => {
-            if (!(key in playerSkills)) playerSkills[key] = 0; // Initialize if missing
-            
+            if (!(key in window.playerSkills)) {
+                window.playerSkills[key] = 0;
+            }
+
             const skill = skills[key];
             const isQuest = skill.quest === true || skill.type === "quest";
-            
+
             if (isQuest) {
+                let shouldUnlock = false;
+
                 if (currentJob === "Novice") {
-                    playerSkills[key] = (currentBaseLevel >= (skill.reqBase || 4)) ? 1 : 0;
+                    shouldUnlock = currentBaseLevel >= (skill.reqBase || 4);
                 } else {
-                    const reqJobLvl = skill.reqJob || 1;
-                    playerSkills[key] = (currentJobLevel >= reqJobLvl) ? 1 : 0;
+                    shouldUnlock = currentJobLevel >= (skill.reqJob || 1);
+                }
+
+                // ✅ FIX: no overwrite spam
+                if (shouldUnlock && window.playerSkills[key] !== 1) {
+                    window.playerSkills[key] = 1;
+                } else if (!shouldUnlock && window.playerSkills[key] !== 0) {
+                    window.playerSkills[key] = 0;
                 }
             }
         });
     }
 
-    // Recalculate Skill Points
+    // ✅ COUNT ONLY NORMAL SKILLS
     let totalSpent = 0;
-    Object.keys(playerSkills).forEach(key => {
-        const skill = jobSkills[currentJob][key];
-        if (skill && !(skill.quest || skill.type === "quest")) {
-            totalSpent += playerSkills[key];
-        }
+
+    Object.keys(window.playerSkills).forEach(key => {
+        const skillData = jobSkills[currentJob]?.[key];
+
+        if (!skillData) return;
+
+        const isQuest = skillData.quest === true || skillData.type === "quest";
+
+        if (isQuest) return;
+
+        totalSpent += window.playerSkills[key] || 0;
     });
 
-    skillPoints = Math.max(0, (currentJobLevel - 1) - totalSpent);
+    // ✅ FINAL SP CALCULATION
+    window.skillPoints = Math.max(0, (currentJobLevel - 1) - totalSpent);
+
+    // ✅ UPDATE UI
+    const spDisplay =
+        document.querySelector("#skillPoints .sp-value") ||
+        document.querySelector(".sp-value");
+
+    if (spDisplay) {
+        spDisplay.innerText = window.skillPoints;
+    }
+
     updateSkillUI();
 }
 
@@ -216,60 +249,68 @@ jobSelect.addEventListener("change", () => {
 function getSkillState(skillName) {
     const job = document.getElementById("job").value;
     const skill = jobSkills[job][skillName];
+
     if (!skill) return "locked";
-    
-    const level = playerSkills[skillName] || 0;
+
+    const level = window.playerSkills[skillName] || 0;
     if (level > 0) return "learned";
 
-    const currentBaseLevel = parseInt(document.getElementById("baseLevel")?.value) || 1; 
+    const currentBaseLevel = parseInt(document.getElementById("baseLevel")?.value) || 1;
     const isQuest = skill.quest === true || skill.type === "quest";
-    const reqValue = skill.reqJob || 1;
 
-    // --- NOVICE BASE LVL vs OTHERS JOB LVL ---
     if (job === "Novice") {
         if (isQuest && currentBaseLevel < 4) return "locked";
     } else {
-        if (currentJobLevel < reqValue) return "locked";
+        if (currentJobLevel < (skill.reqJob || 1)) return "locked";
     }
 
     if (skill.req) {
         for (const [reqSkill, reqLevel] of Object.entries(skill.req)) {
-            if ((playerSkills[reqSkill] || 0) < reqLevel) return "locked";
+            if ((window.playerSkills[reqSkill] || 0) < reqLevel) {
+                return "locked";
+            }
         }
     }
 
     if (isQuest) return "available";
-    return skillPoints > 0 ? "available" : "locked";
+
+    return window.skillPoints > 0 ? "available" : "locked";
 }
 
 function updateSkillUI() {
     const job = document.getElementById("job").value;
     const treeBody = document.getElementById("skillTreeBody");
+
     if (!treeBody) return;
+
     treeBody.innerHTML = "";
 
     const skills = jobSkills[job];
     const layout = skillTreeLayout[job];
+
     if (!skills || !layout) return;
 
     Object.keys(skills).forEach(skillName => {
-        if (!(skillName in playerSkills)) playerSkills[skillName] = 0;
+        if (!(skillName in window.playerSkills)) {
+            window.playerSkills[skillName] = 0;
+        }
+
         const skill = skills[skillName];
         const pos = layout[skillName];
+
         if (!pos) return;
 
         const el = document.createElement("div");
         el.className = "skill";
         el.dataset.skill = skillName;
-        const skillType = (skillTypes[job] && skillTypes[job][skillName]) ? skillTypes[job][skillName] : "Passive";
-        el.dataset.type = skillType;
 
-        const isQuest = (jobSkills[job][skillName] && jobSkills[job][skillName].quest) || false;
+        const isQuest = skill.quest === true || skill.type === "quest";
         if (isQuest) el.classList.add("quest-skill");
 
         el.innerHTML = `
-            <img src="skills/${formatSkillIcon(skill.name)}.png" onerror="this.src='skills/default.png'">
-            <span class="lvl">${playerSkills[skillName]}</span>
+            <img src="skills/${formatSkillIcon(skill.name)}.png"
+                 onerror="this.src='skills/default.png'">
+            <span class="lvl">${window.playerSkills[skillName]}</span>
         `;
 
         el.style.left = pos.x + "%";
@@ -278,7 +319,7 @@ function updateSkillUI() {
 
         const state = getSkillState(skillName);
         el.classList.add(state);
-        
+
         el.onclick = () => upgradeSkill(skillName);
         el.oncontextmenu = (e) => {
             e.preventDefault();
@@ -288,84 +329,55 @@ function updateSkillUI() {
         treeBody.appendChild(el);
     });
 
-    document.querySelector("#skillPoints .sp-value").innerText = skillPoints;
+    document.querySelector("#skillPoints .sp-value").innerText = window.skillPoints;
+
     setTimeout(drawSkillConnections, 50);
     bindSkillTooltips();
 }
 
+//upgrade skills
 function upgradeSkill(skillName) {
     const job = document.getElementById("job").value;
     const skill = jobSkills[job][skillName];
+
     if (!skill) return;
 
-    // Skip Quest Skills (they don't use points)
-    if (skill.quest === true || skill.type === "quest") return; 
+    // ❌ block quest manual click
+    if (skill.quest || skill.type === "quest") return;
 
-    const currentLevel = playerSkills[skillName] || 0;
+    const currentLevel = window.playerSkills[skillName] || 0;
+
     if (currentLevel >= skill.maxLevel) return;
+    if (window.skillPoints <= 0) return;
 
-    // 1. Calculate Total Cost (Target + all Ancestors)
-    const pointsNeededForParents = getMissingPoints(skillName, job);
-    const totalCost = 1 + pointsNeededForParents;
-
-    // 2. Check if we can afford the whole "Package"
-    if (skillPoints < totalCost) {
-        console.warn("Insufficient points for advance upgrade chain.");
-        return;
-    }
-
-    // 3. Helper to apply levels recursively
-    const applyRequirements = (name) => {
-        const s = jobSkills[job][name];
-        if (s && s.req) {
-            for (const [reqName, reqLvl] of Object.entries(s.req)) {
-                // First, ensure the requirement's own requirements are met
-                applyRequirements(reqName);
-                
-                // Then, bring the requirement up to the needed level
-                while ((playerSkills[reqName] || 0) < reqLvl) {
-                    playerSkills[reqName] = (playerSkills[reqName] || 0) + 1;
-                    skillPoints--;
-                }
-            }
+    if (skill.req) {
+        for (const [req, lvl] of Object.entries(skill.req)) {
+            if ((window.playerSkills[req] || 0) < lvl) return;
         }
-    };
-
-    // 4. Execute the upgrade chain
-    applyRequirements(skillName); // Fix the parents
-    playerSkills[skillName]++;    // Upgrade the target
-    skillPoints--; 
-    
-    // 5.   Refresh UI and Stats
-    updateSkillUI();
-    if (typeof updateStats === 'function') {
-        updateStats(); 
     }
+
+    window.playerSkills[skillName] = currentLevel + 1;
+
+    handleSkillLevelChange();
 }
 
+// Decreases a skill and its dependents (to prevent broken trees)
 function decreaseSkill(skillName) {
     const job = document.getElementById("job").value;
     const skill = jobSkills[job][skillName];
-    const currentLevel = playerSkills[skillName] || 0;
+
+    if (!skill) return;
+
+    // ❌ cannot downgrade quest
+    if (skill.quest || skill.type === "quest") return;
+
+    const currentLevel = window.playerSkills[skillName] || 0;
+
     if (currentLevel <= 0) return;
 
-    const isQuest = skill.quest === true || skill.type === "quest";
-    if (isQuest) return;
+    window.playerSkills[skillName] = currentLevel - 1;
 
-    const isPrereqForLearnedSkill = Object.keys(jobSkills[job]).some(key => {
-        const otherSkill = jobSkills[job][key];
-        return otherSkill.req && otherSkill.req[skillName] && playerSkills[key] > 0 && currentLevel <= otherSkill.req[skillName];
-    });
-
-    if (isPrereqForLearnedSkill) return;
-
-    playerSkills[skillName]--;
-    skillPoints++;
-    updateSkillUI();
-
-    if (typeof updateStats === 'function') {
-        updateStats();
-    }
+    handleSkillLevelChange();
 }
 
 function bindSkillTooltips() {
@@ -471,5 +483,10 @@ function drawSkillConnections() {
 // Ensure both level changes trigger the check
 document.getElementById("jobLevel")?.addEventListener("input", handleSkillLevelChange);
 document.getElementById("baseLevel")?.addEventListener("input", handleSkillLevelChange);
+
+document.getElementById("job")?.addEventListener("change", () => {
+    window.playerSkills = {};
+    handleSkillLevelChange();}
+);
 
 //anuu daw

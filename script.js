@@ -3,7 +3,7 @@
 // ===============================
 let currentJobTracked = "Novice";
 let lastJobLevel = 1;
-let skillPoints = 0;
+window.skillPoints = 0;
 window.playerSkills = {}; // Global object for skills.js to access
 
 // ===============================
@@ -232,10 +232,7 @@ function updateStats(changedStatId) {
         updateWeaponOptions();
     }
 
-    // Dynamic Calculation of Skill Points
-    let totalJobPointsEarned = Math.max(0, jobLevel - 1);
-    let totalPointsSpent = Object.values(window.playerSkills).reduce((sum, val) => sum + val, 0);
-    skillPoints = totalJobPointsEarned - totalPointsSpent;
+   handleSkillLevelChange();
 
     // 3. Base Level Validation
     const baseLevelInput = document.getElementById("baseLevel");
@@ -265,19 +262,12 @@ function updateStats(changedStatId) {
         }
     }
 
-    // 5. Skill-Based Passive Stat Bonuses (Static Stat Increases)
+    // 5. Passive Stat Bonuses
     let skillStatBonus = { str: 0, agi: 0, vit: 0, int: 0, dex: 0, luk: 0 };
-    
-    // Archer: Owl's Eye (+1 DEX per level)
-    if (window.playerSkills.owlsEye) {
-        skillStatBonus.dex += window.playerSkills.owlsEye;
-    }
-    // Merchant: Crazy Uproar (Quest: +4 STR)
-    if (window.playerSkills.crazyUproar) {
-        skillStatBonus.str += 4;
-    }
+    if (window.playerSkills.owlsEye) skillStatBonus.dex += window.playerSkills.owlsEye;
+    if (window.playerSkills.crazyUproar) skillStatBonus.str += 4;
 
-    // 6. Final Effective Stats (Raw + Job Bonus + Skill Passive)
+    // 6. Final Effective Stats
     const bonuses = getBonusForJobLevel(job, jobLevel);
     const statKeys = ["str", "agi", "vit", "int", "dex", "luk"];
     let stats = {};
@@ -290,7 +280,6 @@ function updateStats(changedStatId) {
     });
 
     // 7. HP/SP/Weight
-    // Merchant: Enlarge Weight Limit (+200 Weight per level)
     let weightBonus = (window.playerSkills.enlargeWeight) ? (window.playerSkills.enlargeWeight * 200) : 0;
     let weight = 2000 + (30 * stats.str) + (jobWeightModifier[job] || 0) + weightBonus;
     
@@ -301,25 +290,17 @@ function updateStats(changedStatId) {
     document.getElementById("weight").innerText = weight;
     document.getElementById("hpValue").innerText = maxHP;
     document.getElementById("spValue").innerText = maxSP;
-
-    // Regen logic (Passing window.playerSkills via global object access)
     document.getElementById("hpRegen").innerText = calculateHPRegen(maxHP, stats.vit, job);
     document.getElementById("spRegen").innerText = calculateSPRegen(maxSP, stats.int, job);
 
-    // 8. Combat Calculations (ATK / MATK)
+    // 8. Combat (Passive Masteries Only)
     let weapon = document.getElementById("weapon").value;
     let skillAtkBonus = 0;
-
-    // Swordsman Masteries
     if ((weapon === "One-handed Sword" || weapon === "Dagger") && window.playerSkills.swordMastery) {
         skillAtkBonus += window.playerSkills.swordMastery * 4;
     }
     if (weapon === "Two-handed Sword" && window.playerSkills.twoHandedMastery) {
         skillAtkBonus += window.playerSkills.twoHandedMastery * 4;
-    }
-    // Merchant: Overcharge (Classic gives +dmg based on level)
-    if (window.playerSkills.overcharge) {
-        skillAtkBonus += window.playerSkills.overcharge * 2; 
     }
 
     let baseAtk = (weapon === "Bow")
@@ -332,27 +313,15 @@ function updateStats(changedStatId) {
     let matkMax = stats.int + Math.pow(Math.floor(stats.int / 5), 2);
     document.getElementById("matk").innerText = `${matkMin} ~ ${matkMax}`;
 
-    // 9. Defense & Flee
-    // Acolyte: Divine Protection (+3 Hard DEF per level)
+    // 9. Defense & Flee (Passive Logic Only)
     let skillHardDefBonus = (window.playerSkills.divineProtection) ? window.playerSkills.divineProtection * 3 : 0;
+    document.getElementById("def").innerText = `${skillHardDefBonus} + ${stats.vit}`;
+    document.getElementById("mdef").innerText = `0 + ${stats.int}`;
     
-    // Acolyte: Angelus (+5% Soft DEF per level)
-    let angelusLvl = window.playerSkills.angelus || 0;
-    let angelusModifier = 1 + (angelusLvl * 0.05); 
-    let finalSoftDef = Math.floor(stats.vit * angelusModifier);
-
-    document.getElementById("def").innerText = `${skillHardDefBonus} + ${finalSoftDef}`;
-    
-    // Swordsman: Endure (+1 MDEF per level)
-    let skillMdefBonus = (window.playerSkills.endure) ? window.playerSkills.endure : 0;
-    document.getElementById("mdef").innerText = `${skillMdefBonus} + ${stats.int}`;
-    
-    // Thief: Improve Dodge (+3 Flee per level)
     let skillFleeBonus = (window.playerSkills.improveDodge) ? (window.playerSkills.improveDodge * 3) : 0;
     let totalFlee = (level + stats.agi + skillFleeBonus);
     document.getElementById("flee").innerText = `${totalFlee} + ${Math.floor(stats.luk / 10) + 1}`;
     
-    // Archer: Vulture's Eye (+1 Hit per level)
     let skillHitBonus = (window.playerSkills.vulturesEye) ? window.playerSkills.vulturesEye : 0;
     document.getElementById("hit").innerText = level + stats.dex + skillHitBonus;
 
@@ -362,7 +331,7 @@ function updateStats(changedStatId) {
     // Final UI Refresh
     document.getElementById("statusPoints").innerText = Math.max(totalPoints - spentPoints, 0);
     const spDisplay = document.getElementById("skillPointsValue") || document.querySelector(".sp-value");
-    if (spDisplay) spDisplay.innerText = skillPoints;
+    if (spDisplay) spDisplay.innerText = window.skillPoints;
 
     if (document.getElementById('skillsPanel').classList.contains('active') && typeof updateSkillUI === 'function') {
         updateSkillUI();
