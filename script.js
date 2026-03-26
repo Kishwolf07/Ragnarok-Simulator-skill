@@ -12,26 +12,31 @@ window.playerSkills = {}; // Global object for skills.js to access
 function updateCharacterImage() {
     const job = document.getElementById("job").value;
     const genderToggle = document.getElementById("genderToggle");
-    const genderSymbol = document.querySelector(".gender-symbol");
     const characterGif = document.querySelector(".character-gif");
 
+    // Checkbox checked = Female (G), unchecked = Male
     const isFemale = genderToggle && genderToggle.checked;
 
-    if (genderSymbol) {
-        genderSymbol.textContent = isFemale ? "♀" : "♂";
-        genderSymbol.classList.remove("male-icon", "female-icon");
-        genderSymbol.classList.add(isFemale ? "female-icon" : "male-icon");
-    }
-
+    // Mapping: "novice" -> "novice.gif" (Male) or "noviceG.gif" (Female)
     const jobFile = job.toLowerCase();
     const genderSuffix = isFemale ? "G" : "";
     const gifSrc = `jobs/${jobFile}${genderSuffix}.gif`;
 
     if (characterGif) {
+        // Smooth fade-out before switching
+        characterGif.style.transition = "opacity 0.2s ease";
         characterGif.style.opacity = 0;
+
         setTimeout(() => {
             characterGif.src = gifSrc;
-            characterGif.style.opacity = 1;
+            
+            // Wait for image to load or just fade back in
+            characterGif.onload = () => {
+                characterGif.style.opacity = 1;
+            };
+            
+            // Fallback in case onload doesn't fire (e.g. cached)
+            setTimeout(() => { characterGif.style.opacity = 1; }, 50);
         }, 200);
     }
 }
@@ -210,9 +215,6 @@ function updateWeaponOptions() {
     });
 }
 
-// ===============================
-// MAIN UPDATE FUNCTION
-// ===============================
 function updateStats(changedStatId) {
     const jobLevelInput = document.getElementById("jobLevel");
     let jobLevel = parseInt(jobLevelInput.value) || 1;
@@ -232,7 +234,10 @@ function updateStats(changedStatId) {
         updateWeaponOptions();
     }
 
-   handleSkillLevelChange();
+    // SYNC SKILLS: Pass 'true' to prevent the skill script from calling updateStats back
+    if (typeof handleSkillLevelChange === 'function') {
+        handleSkillLevelChange(true);
+    }
 
     // 3. Base Level Validation
     const baseLevelInput = document.getElementById("baseLevel");
@@ -293,9 +298,16 @@ function updateStats(changedStatId) {
     document.getElementById("hpRegen").innerText = calculateHPRegen(maxHP, stats.vit, job);
     document.getElementById("spRegen").innerText = calculateSPRegen(maxSP, stats.int, job);
 
-    // 8. Combat (Passive Masteries Only)
+    // 8. Combat Masteries & Double Attack
     let weapon = document.getElementById("weapon").value;
     let skillAtkBonus = 0;
+
+    // Double Attack Logic
+    let doubleAttackChance = 0;
+    if (weapon === "Dagger" && window.playerSkills.doubleAttack) {
+        doubleAttackChance = window.playerSkills.doubleAttack * 5; 
+    }
+
     if ((weapon === "One-handed Sword" || weapon === "Dagger") && window.playerSkills.swordMastery) {
         skillAtkBonus += window.playerSkills.swordMastery * 4;
     }
@@ -313,20 +325,31 @@ function updateStats(changedStatId) {
     let matkMax = stats.int + Math.pow(Math.floor(stats.int / 5), 2);
     document.getElementById("matk").innerText = `${matkMin} ~ ${matkMax}`;
 
-    // 9. Defense & Flee (Passive Logic Only)
+    // 9. Defense, Hit & Flee
     let skillHardDefBonus = (window.playerSkills.divineProtection) ? window.playerSkills.divineProtection * 3 : 0;
     document.getElementById("def").innerText = `${skillHardDefBonus} + ${stats.vit}`;
     document.getElementById("mdef").innerText = `0 + ${stats.int}`;
     
-    let skillFleeBonus = (window.playerSkills.improveDodge) ? (window.playerSkills.improveDodge * 3) : 0;
+    let skillFleeBonus = 0;
+    if (window.playerSkills.improveDodge) {
+        let fleeRate = (job === "Assassin" || job === "Rogue") ? 4 : 3;
+        skillFleeBonus = window.playerSkills.improveDodge * fleeRate;
+    }
+    
     let totalFlee = (level + stats.agi + skillFleeBonus);
     document.getElementById("flee").innerText = `${totalFlee} + ${Math.floor(stats.luk / 10) + 1}`;
     
     let skillHitBonus = (window.playerSkills.vulturesEye) ? window.playerSkills.vulturesEye : 0;
+    if (weapon === "Dagger" && window.playerSkills.doubleAttack) {
+        skillHitBonus += window.playerSkills.doubleAttack;
+    }
     document.getElementById("hit").innerText = level + stats.dex + skillHitBonus;
 
     document.getElementById("critical").innerText = Math.floor(stats.luk * 0.3) + 1;
     document.getElementById("aspd").innerText = calculateASPD(job, weapon, stats.agi, stats.dex);
+
+    // 10. Resource Bar Updates
+    updateResourceBars(maxHP, maxSP);
 
     // Final UI Refresh
     document.getElementById("statusPoints").innerText = Math.max(totalPoints - spentPoints, 0);
@@ -336,6 +359,16 @@ function updateStats(changedStatId) {
     if (document.getElementById('skillsPanel').classList.contains('active') && typeof updateSkillUI === 'function') {
         updateSkillUI();
     }
+}
+
+// Helper function to update the visual bars
+function updateResourceBars(hp, sp) {
+    const hpText = document.getElementById("hpText");
+    const spText = document.getElementById("spText");
+
+    // In the simulator, we fill to 100%
+    if (hpBar) hpBar.style.width = "100%";
+    if (spBar) spBar.style.width = "100%";
 }
 
 function resetCharacter() {

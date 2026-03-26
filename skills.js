@@ -144,75 +144,88 @@ function getMissingPoints(skillName, job) {
     return extra;
 }
 
+function onSkillClick(skillName, level) {
+    // 1. Save to global tracking object
+    window.playerSkills[skillName] = level; 
+    
+    // 2. Refresh skill logic
+    handleSkillLevelChange(); 
+    
+    // 3. Force the stats panel to recalculate the bonuses (ATK, Flee, etc.)
+    if (typeof updateStats === 'function') {
+        updateStats(); 
+    }
+}
+
 //handle skil level change
-function handleSkillLevelChange() {
+function handleSkillLevelChange(skipStatsUpdate = false) {
     const jobLvlInput = document.getElementById("jobLevel"); 
     const baseLvlInput = document.getElementById("baseLevel");
     const currentJob = document.getElementById("job").value;
 
     if (!jobLvlInput) return;
 
-    currentJobLevel = parseInt(jobLvlInput.value) || 1;
+    const currentJobLevel = parseInt(jobLvlInput.value) || 1;
     const currentBaseLevel = parseInt(baseLvlInput?.value) || 1;
 
-    const skills = jobSkills[currentJob];
+    // --- AUTO-RESET LOGIC ---
+    let tempSpent = 0;
+    Object.keys(window.playerSkills).forEach(key => {
+        const skillData = jobSkills[currentJob]?.[key];
+        if (skillData && !skillData.quest && skillData.type !== "quest") {
+            tempSpent += window.playerSkills[key] || 0;
+        }
+    });
 
-    if (skills) {
-        Object.keys(skills).forEach(key => {
-            if (!(key in window.playerSkills)) {
+    if (currentJobLevel === 1 || tempSpent > (currentJobLevel - 1)) {
+        Object.keys(window.playerSkills).forEach(key => {
+            const skillData = jobSkills[currentJob]?.[key];
+            if (skillData && !skillData.quest && skillData.type !== "quest") {
                 window.playerSkills[key] = 0;
             }
+        });
+        console.log("Job Level modified: Passive stats cleared.");
+    }
+
+    // --- QUEST SKILL AUTO-UNLOCK ---
+    const skills = jobSkills[currentJob];
+    if (skills) {
+        Object.keys(skills).forEach(key => {
+            if (!(key in window.playerSkills)) window.playerSkills[key] = 0;
 
             const skill = skills[key];
             const isQuest = skill.quest === true || skill.type === "quest";
 
             if (isQuest) {
-                let shouldUnlock = false;
+                let shouldUnlock = (currentJob === "Novice") 
+                    ? currentBaseLevel >= (skill.reqBase || 4)
+                    : currentJobLevel >= (skill.reqJob || 1);
 
-                if (currentJob === "Novice") {
-                    shouldUnlock = currentBaseLevel >= (skill.reqBase || 4);
-                } else {
-                    shouldUnlock = currentJobLevel >= (skill.reqJob || 1);
-                }
-
-                // ✅ FIX: no overwrite spam
-                if (shouldUnlock && window.playerSkills[key] !== 1) {
-                    window.playerSkills[key] = 1;
-                } else if (!shouldUnlock && window.playerSkills[key] !== 0) {
-                    window.playerSkills[key] = 0;
-                }
+                window.playerSkills[key] = shouldUnlock ? 1 : 0;
             }
         });
     }
 
-    // ✅ COUNT ONLY NORMAL SKILLS
+    // --- SP CALCULATION ---
     let totalSpent = 0;
-
     Object.keys(window.playerSkills).forEach(key => {
         const skillData = jobSkills[currentJob]?.[key];
-
-        if (!skillData) return;
-
-        const isQuest = skillData.quest === true || skillData.type === "quest";
-
-        if (isQuest) return;
-
+        if (!skillData || skillData.quest || skillData.type === "quest") return;
         totalSpent += window.playerSkills[key] || 0;
     });
 
-    // ✅ FINAL SP CALCULATION
     window.skillPoints = Math.max(0, (currentJobLevel - 1) - totalSpent);
 
-    // ✅ UPDATE UI
-    const spDisplay =
-        document.querySelector("#skillPoints .sp-value") ||
-        document.querySelector(".sp-value");
+    const spDisplay = document.querySelector(".sp-value");
+    if (spDisplay) spDisplay.innerText = window.skillPoints;
 
-    if (spDisplay) {
-        spDisplay.innerText = window.skillPoints;
+    if (typeof updateSkillUI === 'function') updateSkillUI();
+
+    // --- TRIGGER STATS UPDATE ---
+    // If we are NOT coming from updateStats, trigger it now to refresh HP/Weight panels
+    if (!skipStatsUpdate && typeof updateStats === 'function') {
+        updateStats();
     }
-
-    updateSkillUI();
 }
 
 function renderSkillsForJob(job) {
@@ -335,30 +348,93 @@ function updateSkillUI() {
     bindSkillTooltips();
 }
 
-//upgrade skills
+// New helper to check if a skill is affordable including its prerequisites
+function getTotalCostToUpgrade(skillName, job) {
+    let cost = 0;
+    const skill = jobSkills[job][skillName];
+
+    if (!skill || skill.quest || skill.type === "quest") return 0;
+
+    // 1. Cost for the skill itself (if not already maxed)
+    const currentLevel = window.playerSkills[skillName] || 0;
+    if (currentLevel < skill.maxLevel) {
+        cost += 1;
+    } else {
+        return 0; // Already maxed, no additional cost
+    }
+
+    // 2. Cost for prerequisites (recursive)
+    if (skill.req) {
+        for (const [reqName, reqLvl] of Object.entries(skill.req)) {
+            const reqSkillData = jobSkills[job][reqName];
+            
+            // Skip quest skills as they don't cost points
+            if (reqSkillData.quest || reqSkillData.type === "quest") continue;
+
+            const currentReqLvl = window.playerSkills[reqName] || 0;
+            if (currentReqLvl < reqLvl) {
+                // Add the points needed to reach the required level
+                cost += (reqLvl - currentReqLvl);
+                // Also check if THAT prerequisite needs its own prerequisites
+                cost += getMissingPoints(reqName, job); 
+            }
+        }
+    }
+    return cost;
+}
+
+// Optimized recursive function to actually APPLY the levels
+function autoUpgradeParents(skillName, job) {
+    const skill = jobSkills[job][skillName];
+    if (!skill || !skill.req) return;
+
+    for (const [reqName, reqLvl] of Object.entries(skill.req)) {
+        const reqSkillData = jobSkills[job][reqName];
+        if (reqSkillData.quest || reqSkillData.type === "quest") continue;
+
+        // Ensure parent is at required level
+        if ((window.playerSkills[reqName] || 0) < reqLvl) {
+            autoUpgradeParents(reqName, job); // Go deeper first
+            window.playerSkills[reqName] = reqLvl;
+        }
+    }
+}
+
+// Updated Upgrade function
 function upgradeSkill(skillName) {
     const job = document.getElementById("job").value;
     const skill = jobSkills[job][skillName];
+    const skillElement = document.querySelector(`[data-skill="${skillName}"]`);
 
-    if (!skill) return;
-
-    // ❌ block quest manual click
-    if (skill.quest || skill.type === "quest") return;
+    if (!skill || skill.quest || skill.type === "quest") return;
 
     const currentLevel = window.playerSkills[skillName] || 0;
-
     if (currentLevel >= skill.maxLevel) return;
-    if (window.skillPoints <= 0) return;
 
-    if (skill.req) {
-        for (const [req, lvl] of Object.entries(skill.req)) {
-            if ((window.playerSkills[req] || 0) < lvl) return;
+    // Calculate total points needed for this click
+    const totalRequired = getTotalCostToUpgrade(skillName, job);
+
+    if (window.skillPoints >= totalRequired && totalRequired > 0) {
+        // 1. Level up parents to their minimum requirements
+        autoUpgradeParents(skillName, job);
+        
+        // 2. Level up the target skill
+        window.playerSkills[skillName] = currentLevel + 1;
+
+        // 3. Refresh SP and UI
+        handleSkillLevelChange();
+    } else {
+        //Flash red if points are missing
+        if (skillElement) {
+            skillElement.classList.add("insufficient-points");
+            
+            // Remove the class after the animation ends (500ms)
+            setTimeout(() => {
+                skillElement.classList.remove("insufficient-points");
+            }, 500);
         }
+        console.log(`Need ${totalRequired} SP. You only have ${window.skillPoints}.`);
     }
-
-    window.playerSkills[skillName] = currentLevel + 1;
-
-    handleSkillLevelChange();
 }
 
 // Decreases a skill and its dependents (to prevent broken trees)
@@ -368,7 +444,7 @@ function decreaseSkill(skillName) {
 
     if (!skill) return;
 
-    // ❌ cannot downgrade quest
+    // cannot downgrade quest
     if (skill.quest || skill.type === "quest") return;
 
     const currentLevel = window.playerSkills[skillName] || 0;

@@ -350,7 +350,7 @@ body::after {
 
 
 .hp-fill {
-    background: linear-gradient(90deg, #8b0000, #ff0000);
+background: linear-gradient(90deg, #228b22, #32cd32);
 }
 
 .sp-fill {
@@ -480,21 +480,29 @@ input[type=number] {
     color: #00bfff;
 }
 
-/* --- GENDER SWITCHING --- */
+/* --- GENDER SWITCHING REDESIGN --- */
 .gender-switch {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    position: relative;
-    top: -5px;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.gender-label {
+    font-size: 10px;
+    color: #ffd96a;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
 }
 
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 28px;
+    width: 70px;
+    height: 30px;
 }
 
 .switch input {
@@ -507,44 +515,56 @@ input[type=number] {
     position: absolute;
     cursor: pointer;
     inset: 0;
-    background-color: #00bfff;
-    transition: 0.3s;
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #050b1c; /* Deep dark blue */
+    border: 1px solid #c8a94c; /* Gold border */
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
 }
 
+/* The Sliding Metallic Block */
 .slider:before {
-    content: "";
+    content: "M"; 
     position: absolute;
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background: white;
-    transition: 0.3s;
-    border-radius: 50%;
-}
-
-.gender-symbol {
-    font-size: 20px;
-    font-weight: 900;
-    color: #fff;
-    z-index: 2;
-    transition: 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 191, 255, 0.7);
+    font-size: 13px;
+    font-weight: 900;
+    color: #050b1c; /* Dark text on gold button */
+    height: 22px;
+    width: 30px;
+    left: 3px;
+    bottom: 3px;
+    background: linear-gradient(180deg, #ffd96a 0%, #c8a94c 100%);
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
-input:checked + .slider {
-    background-color: #ff69b4;
-}
-
+/* Move the slider and change the letter to F when checked */
 input:checked + .slider:before {
-    transform: translateX(30px);
+    transform: translateX(32px);
+    content: "F";
+}
+
+/* Hover Effect */
+.switch:hover .slider {
+    border-color: #ffd96a;
+    box-shadow: 0 0 10px rgba(200, 169, 76, 0.3), inset 0 0 5px black;
+}
+
+/* Active/Focus state */
+input:focus + .slider {
+    box-shadow: 0 0 8px rgba(200, 169, 76, 0.6);
+}
+
+.switch:hover .slider {
+    box-shadow: 0 0 10px rgba(200, 169, 76, 0.4), inset 0 0 5px black;
+}
+
+.character-box img.character-gif {
+    transition: opacity 0.2s ease-in-out;
 }
 
 /* STAT ICONS */
@@ -770,4 +790,17 @@ input:checked + .slider:before {
 @keyframes spShine {
     0% { left: -100%; }
     100% { left: 200%; }
+}
+@keyframes shake-red {
+    0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0px red; }
+    25% { transform: translateX(-52%) scale(1.05); box-shadow: 0 0 15px red; }
+    50% { transform: translateX(-48%) scale(1.05); box-shadow: 0 0 15px red; }
+    75% { transform: translateX(-51%) scale(1.05); box-shadow: 0 0 15px red; }
+    100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0px red; }
+}
+
+.insufficient-points {
+    animation: shake-red 0.4s ease-in-out;
+    border: 2px solid red !important;
+    z-index: 100; /* Ensure it stays above other lines while shaking */
 }
