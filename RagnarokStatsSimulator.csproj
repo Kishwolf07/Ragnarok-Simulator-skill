@@ -88,6 +88,9 @@
     <None Update="script.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="skills.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="skills\angelus.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

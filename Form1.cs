@@ -11,6 +11,8 @@ namespace RagnarokStatsSimulator
         {
             InitializeComponent();
             InitializeWebView();
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
         }
 
         private async void InitializeWebView()
